@@ -170,11 +170,39 @@ filtered_data = data[
 st.title("🌏 유라시아 대륙 시위 데이터 분석 대시보드 (2024-2025)")
 st.markdown(f"**분석 기간:** `{start_date.isoformat()}` 부터 `{end_date.isoformat()}` 까지. (이 대시보드는 가상의 시뮬레이션 데이터입니다.)")
 
+# --- 5-1. 요약 통계 (Metrics) ---
+st.subheader("필터 요약 (At a Glance)")
+
+col_m1, col_m2, col_m3 = st.columns(3)
+
+# 1. 총 시위 건수
+col_m1.metric(label="총 시위 건수", value=f"{len(filtered_data)} 건")
+
+# 2. 최다 발생 국가
+if not filtered_data.empty:
+    top_country = filtered_data['country'].value_counts().idxmax()
+    top_country_count = filtered_data['country'].value_counts().max()
+    col_m2.metric(label="최다 발생 국가", value=top_country, help=f"{top_country}에서 {top_country_count}건 발생")
+else:
+    col_m2.metric(label="최다 발생 국가", value="데이터 없음")
+
+# 3. 최다 시위 유형
+if not filtered_data.empty:
+    top_type = filtered_data['protest_type'].value_counts().idxmax()
+    top_type_count = filtered_data['protest_type'].value_counts().max()
+    col_m3.metric(label="최다 시위 유형", value=top_type, help=f"{top_type} 유형 {top_type_count}건 발생")
+else:
+    col_m3.metric(label="최다 시위 유형", value="데이터 없음")
+    
+st.divider() # 구분선 추가
+
+
 # 5-1. 맵 시각화 (클러스터링 포함)
-subheader_text = f"필터링된 총 시위 건수: **{len(filtered_data)}**건"
+# 기존 subheader_text의 총 건수 정보는 위 metric으로 이동했습니다.
+map_subheader = "시위 발생 위치 지도"
 if k_clusters > 1:
-    subheader_text += f" (K={k_clusters} 클러스터링 적용)"
-st.subheader(subheader_text)
+    map_subheader += f" (K={k_clusters} 클러스터링 적용)"
+st.subheader(map_subheader)
 
 
 if not filtered_data.empty:
