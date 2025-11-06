@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans # 클러스터링을 위해
 import datetime
-import plotly.express as px # Plotly (도넛 차트)
-import pydeck as pdk # PyDeck (히트맵)
+# import plotly.express as px # 이전 버전으로 되돌리기 위해 Plotly 제외
+# import pydeck as pdk # 이전 버전으로 되돌리기 위해 PyDeck 제외
 
 # --- 1. 앱 설정 ---
 st.set_page_config(
@@ -147,24 +147,22 @@ scales_to_filter = st.sidebar.multiselect(
     default=all_scales # 기본으로 모두 선택
 )
 
-# --- 3-5. 시각화 옵션 ---
+# --- 3-5. 시각화 옵션 (클러스터링) ---
 st.sidebar.subheader("지도 시각화 옵션")
-map_viz_type = st.sidebar.selectbox(
-    "지도 유형 선택:",
-    options=['점 지도 (Clustering)', '밀도 지도 (Heatmap)'],
-    index=0
-)
+# map_viz_type = st.sidebar.selectbox( # 히트맵 옵션 제거
+#     "지도 유형 선택:",
+#     options=['점 지도 (Clustering)', '밀도 지도 (Heatmap)'],
+#     index=0
+# )
 
-# 3-6. 클러스터 개수(K) 슬라이더
-k_clusters = 1
-if map_viz_type == '점 지도 (Clustering)':
-    k_clusters = st.sidebar.slider(
-        '클러스터 개수 (K):',
-        min_value=1,
-        max_value=10,
-        value=1, # 기본값 1 (클러스터링 없음)
-        help='K=1은 클러스터링을 사용하지 않습니다. 2 이상을 선택하면 K-Means 클러스터링을 실행합니다.'
-    )
+# 3-6. 클러스터 개수(K) 슬라이더 (조건 없이 항상 표시)
+k_clusters = st.sidebar.slider(
+    '클러스터 개수 (K):',
+    min_value=1,
+    max_value=10,
+    value=1, # 기본값 1 (클러스터링 없음)
+    help='K=1은 클러스터링을 사용하지 않습니다. 2 이상을 선택하면 K-Means 클러스터링을 실행합니다.'
+)
 
 
 # --- 4. 데이터 필터링 ---
@@ -211,58 +209,34 @@ else:
 st.divider() # 구분선 추가
 
 
-# 5-1. 맵 시각화 (클러스터링 또는 히트맵)
-# 기존 subheader_text의 총 건수 정보는 위 metric으로 이동했습니다.
-map_subheader = f"시위 발생 위치 지도 ({map_viz_type})"
-if map_viz_type == '점 지도 (Clustering)' and k_clusters > 1:
+# 5-1. 맵 시각화 (클러스터링)
+map_subheader = "시위 발생 위치 지도 (Clustering)"
+if k_clusters > 1:
     map_subheader += f" (K={k_clusters} 클러스터링 적용)"
 st.subheader(map_subheader)
 
 
 if not filtered_data.empty:
-    if map_viz_type == '점 지도 (Clustering)':
-        if k_clusters > 1:
-            # K=2 이상이면 K-Means 클러스터링 실행
-            with st.spinner('위치 클러스터링 중...'):
-                kmeans = KMeans(n_clusters=k_clusters, n_init=10, random_state=42)
-                # copy()를 사용하여 SettingWithCopyWarning 방지
-                filtered_data_copy = filtered_data.copy()
-                filtered_data_copy['cluster'] = kmeans.fit_predict(filtered_data_copy[['lat', 'lon']])
-                
-                # 클러스터 번호에 따라 색상 매핑
-                filtered_data_copy['color'] = filtered_data_copy['cluster'].apply(
-                    lambda x: CLUSTER_COLORS[x % len(CLUSTER_COLORS)]
-                )
-                
-                # 'color' 컬럼을 사용하여 지도에 색상 표시
-                st.map(filtered_data_copy, color='color')
-                
-        else:
-            # K=1이면 (기본값) 클러스터링 없이 표시
-            st.map(filtered_data)
+    # st.map (기본 지도) 사용
+    if k_clusters > 1:
+        # K=2 이상이면 K-Means 클러스터링 실행
+        with st.spinner('위치 클러스터링 중...'):
+            kmeans = KMeans(n_clusters=k_clusters, n_init=10, random_state=42)
+            # copy()를 사용하여 SettingWithCopyWarning 방지
+            filtered_data_copy = filtered_data.copy()
+            filtered_data_copy['cluster'] = kmeans.fit_predict(filtered_data_copy[['lat', 'lon']])
             
-    elif map_viz_type == '밀도 지도 (Heatmap)':
-        # PyDeck을 사용한 히트맵
-        st.pydeck_chart(pdk.Deck(
-            map_style='mapbox://styles/mapbox/light-v9',
-            initial_view_state=pdk.ViewState(
-                latitude=filtered_data['lat'].mean(),
-                longitude=filtered_data['lon'].mean(),
-                zoom=3,
-                pitch=0,
-            ),
-            layers=[
-                pdk.Layer(
-                   'HeatmapLayer',
-                   data=filtered_data[['lat', 'lon']],
-                   get_position='[lon, lat]',
-                   opacity=0.9,
-                   radius_pixels=70,
-                   intensity=1,
-                   threshold=0.03,
-                ),
-            ],
-        ))
+            # 클러스터 번호에 따라 색상 매핑
+            filtered_data_copy['color'] = filtered_data_copy['cluster'].apply(
+                lambda x: CLUSTER_COLORS[x % len(CLUSTER_COLORS)]
+            )
+            
+            # 'color' 컬럼을 사용하여 지도에 색상 표시
+            st.map(filtered_data_copy, color='color')
+            
+    else:
+        # K=1이면 (기본값) 클러스터링 없이 표시
+        st.map(filtered_data)
         
 else:
     st.warning("이 조건에 맞는 데이터가 없습니다. 필터를 조정해 주세요.")
@@ -280,40 +254,22 @@ with col1:
         st.info("데이터 없음")
 
 with col2:
-    # 5-2-2. 유형별 시위 건수 (도넛 차트)
-    st.subheader("시위 유형별 건수 (비율)")
+    # 5-2-2. 유형별 시위 건수 (기본 Bar 차트로 복원)
+    st.subheader("시위 유형별 건수")
     if not filtered_data.empty:
-        type_counts = filtered_data['protest_type'].value_counts().reset_index()
-        type_counts.columns = ['type', 'count'] # 컬럼명 변경
-        
-        fig_pie = px.pie(
-            type_counts, 
-            values='count', 
-            names='type', 
-            hole=0.4, # 도넛 차트
-            color_discrete_sequence=px.colors.sequential.Purples_r # 색상 테마
-        )
-        fig_pie.update_layout(
-            legend_title_text='시위 유형',
-            legend_orientation='h', # 범례 가로로 표시
-            legend_y=-0.2
-        )
-        st.plotly_chart(fig_pie, use_container_width=True)
+        type_counts = filtered_data['protest_type'].value_counts()
+        st.bar_chart(type_counts)
     else:
         st.info("데이터 없음")
 
-# 5-3. 국가별 시위 유형 분석 (누적 막대 차트)
-st.subheader("국가별 시위 유형 분석")
+# 5-3. 기간별 시위 발생 추이 (Line Chart)
+# (국가별 누적 막대 차트 대신 이전 버전의 라인 차트로 복원)
+st.subheader("기간별 시위 발생 추이")
 if not filtered_data.empty:
-    # 국가(index) vs 유형(columns)으로 피벗 테이블 생성
-    pivot_df = filtered_data.pivot_table(
-        index='country', 
-        columns='protest_type', 
-        aggfunc='size', 
-        fill_value=0
-    )
-    # 누적 막대 차트
-    st.bar_chart(pivot_df)
+    # 날짜(D)별로 건수 집계
+    data_over_time = filtered_data.set_index('date').resample('D').size().reset_index(name='count')
+    # st.line_chart는 index를 x축으로 사용하므로 'date'를 index로 설정
+    st.line_chart(data_over_time.rename(columns={'date': 'index'}).set_index('index'))
 else:
     st.info("데이터 없음")
 
