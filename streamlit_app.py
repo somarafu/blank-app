@@ -30,19 +30,18 @@ def load_data(nrows):
     
     # 유라시아 주요 도시 및 국가, 좌표, (가상) 시위 유형 편향
     # 편향(bias) 순서: ['노동', '시민', '환경', '개인']
-    # + 국가별 데이터 분산 범위를 위한 'scale' 추가
     cities = {
-        'Paris': {'coords': (48.8566, 2.3522), 'country': 'France', 'bias': [0.5, 0.3, 0.1, 0.1], 'scale': 2.5},
-        'Berlin': {'coords': (52.5200, 13.4050), 'country': 'Germany', 'bias': [0.2, 0.3, 0.4, 0.1], 'scale': 2.0},
-        'London': {'coords': (51.5074, -0.1278), 'country': 'UK', 'bias': [0.3, 0.4, 0.2, 0.1], 'scale': 2.5},
-        'Madrid': {'coords': (40.4168, -3.7038), 'country': 'Spain', 'bias': [0.4, 0.3, 0.2, 0.1], 'scale': 3.0},
-        'Rome': {'coords': (41.9028, 12.4964), 'country': 'Italy', 'bias': [0.4, 0.4, 0.1, 0.1], 'scale': 3.0},
-        'Moscow': {'coords': (55.7558, 37.6173), 'country': 'Russia', 'bias': [0.2, 0.5, 0.1, 0.2], 'scale': 5.0}, # 넓은 범위
-        'Istanbul': {'coords': (41.0082, 28.9784), 'country': 'Turkey', 'bias': [0.3, 0.5, 0.1, 0.1], 'scale': 3.5},
-        'Delhi': {'coords': (28.6139, 77.2090), 'country': 'India', 'bias': [0.4, 0.4, 0.1, 0.1], 'scale': 4.0},
-        'Beijing': {'coords': (39.9042, 116.4074), 'country': 'China', 'bias': [0.5, 0.2, 0.2, 0.1], 'scale': 4.5},
-        'Tokyo': {'coords': (35.6895, 139.6917), 'country': 'Japan', 'bias': [0.1, 0.6, 0.2, 0.1], 'scale': 1.5}, # 좁은 범위
-        'Seoul': {'coords': (37.5665, 126.9780), 'country': 'South Korea', 'bias': [0.4, 0.3, 0.1, 0.2], 'scale': 1.0} # 가장 좁은 범위
+        'Paris': {'coords': (48.8566, 2.3522), 'country': 'France', 'bias': [0.5, 0.3, 0.1, 0.1]},
+        'Berlin': {'coords': (52.5200, 13.4050), 'country': 'Germany', 'bias': [0.2, 0.3, 0.4, 0.1]},
+        'London': {'coords': (51.5074, -0.1278), 'country': 'UK', 'bias': [0.3, 0.4, 0.2, 0.1]},
+        'Madrid': {'coords': (40.4168, -3.7038), 'country': 'Spain', 'bias': [0.4, 0.3, 0.2, 0.1]},
+        'Rome': {'coords': (41.9028, 12.4964), 'country': 'Italy', 'bias': [0.4, 0.4, 0.1, 0.1]},
+        'Moscow': {'coords': (55.7558, 37.6173), 'country': 'Russia', 'bias': [0.2, 0.5, 0.1, 0.2]},
+        'Istanbul': {'coords': (41.0082, 28.9784), 'country': 'Turkey', 'bias': [0.3, 0.5, 0.1, 0.1]},
+        'Delhi': {'coords': (28.6139, 77.2090), 'country': 'India', 'bias': [0.4, 0.4, 0.1, 0.1]},
+        'Beijing': {'coords': (39.9042, 116.4074), 'country': 'China', 'bias': [0.5, 0.2, 0.2, 0.1]},
+        'Tokyo': {'coords': (35.6895, 139.6917), 'country': 'Japan', 'bias': [0.1, 0.6, 0.2, 0.1]},
+        'Seoul': {'coords': (37.5665, 126.9780), 'country': 'South Korea', 'bias': [0.4, 0.3, 0.1, 0.2]},
     }
     
     city_names = list(cities.keys())
@@ -61,12 +60,10 @@ def load_data(nrows):
         lat, lon = city_info['coords']
         country = city_info['country']
         bias = city_info['bias']
-        country_scale = city_info['scale'] # 국가별 스케일 값 가져오기
         
-        # 중심 좌표 근처에 무작위로 점 생성 (국가별 스케일 적용)
-        # np.random.normal (정규분포) 대신 np.random.uniform (균등분포) 사용
-        lat_offset = np.random.uniform(-country_scale, country_scale) 
-        lon_offset = np.random.uniform(-country_scale, country_scale)
+        # 중심 좌표 근처에 무작위로 점 생성
+        lat_offset = np.random.normal(0, 0.05) 
+        lon_offset = np.random.normal(0, 0.05)
         
         # 무작위 날짜 생성
         random_timestamp = np.random.uniform(start_timestamp, end_timestamp)
