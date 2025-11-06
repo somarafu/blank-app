@@ -3,8 +3,6 @@ import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans # 클러스터링을 위해
 import datetime
-# import plotly.express as px # 이전 버전으로 되돌리기 위해 Plotly 제외
-# import pydeck as pdk # 이전 버전으로 되돌리기 위해 PyDeck 제외
 
 # --- 1. 앱 설정 ---
 st.set_page_config(
@@ -147,15 +145,8 @@ scales_to_filter = st.sidebar.multiselect(
     default=all_scales # 기본으로 모두 선택
 )
 
-# --- 3-5. 시각화 옵션 (클러스터링) ---
-st.sidebar.subheader("지도 시각화 옵션")
-# map_viz_type = st.sidebar.selectbox( # 히트맵 옵션 제거
-#     "지도 유형 선택:",
-#     options=['점 지도 (Clustering)', '밀도 지도 (Heatmap)'],
-#     index=0
-# )
-
-# 3-6. 클러스터 개수(K) 슬라이더 (조건 없이 항상 표시)
+# 3-5. 클러스터 개수(K) 슬라이더
+st.sidebar.subheader("클러스터링")
 k_clusters = st.sidebar.slider(
     '클러스터 개수 (K):',
     min_value=1,
@@ -209,15 +200,15 @@ else:
 st.divider() # 구분선 추가
 
 
-# 5-1. 맵 시각화 (클러스터링)
-map_subheader = "시위 발생 위치 지도 (Clustering)"
+# 5-1. 맵 시각화 (클러스터링 포함)
+# 기존 subheader_text의 총 건수 정보는 위 metric으로 이동했습니다.
+map_subheader = "시위 발생 위치 지도"
 if k_clusters > 1:
     map_subheader += f" (K={k_clusters} 클러스터링 적용)"
 st.subheader(map_subheader)
 
 
 if not filtered_data.empty:
-    # st.map (기본 지도) 사용
     if k_clusters > 1:
         # K=2 이상이면 K-Means 클러스터링 실행
         with st.spinner('위치 클러스터링 중...'):
@@ -254,7 +245,7 @@ with col1:
         st.info("데이터 없음")
 
 with col2:
-    # 5-2-2. 유형별 시위 건수 (기본 Bar 차트로 복원)
+    # 5-2-2. 유형별 시위 건수
     st.subheader("시위 유형별 건수")
     if not filtered_data.empty:
         type_counts = filtered_data['protest_type'].value_counts()
@@ -263,13 +254,11 @@ with col2:
         st.info("데이터 없음")
 
 # 5-3. 기간별 시위 발생 추이 (Line Chart)
-# (국가별 누적 막대 차트 대신 이전 버전의 라인 차트로 복원)
 st.subheader("기간별 시위 발생 추이")
 if not filtered_data.empty:
-    # 날짜(D)별로 건수 집계
-    data_over_time = filtered_data.set_index('date').resample('D').size().reset_index(name='count')
-    # st.line_chart는 index를 x축으로 사용하므로 'date'를 index로 설정
-    st.line_chart(data_over_time.rename(columns={'date': 'index'}).set_index('index'))
+    # 'date' 컬럼을 인덱스로 설정하고, 일별(D)로 리샘플링하여 개수 집계
+    timeline_data = filtered_data.set_index('date').resample('D').size().reset_index(name='Count')
+    st.line_chart(timeline_data.set_index('date'))
 else:
     st.info("데이터 없음")
 
