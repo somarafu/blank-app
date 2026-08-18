@@ -1,0 +1,98 @@
+[
+  {
+    "id": "parthenon",
+    "type": "museum",
+    "title": {
+      "ko": "파르테논",
+      "en": "Parthenon",
+      "el": "Παρθενώνας"
+    },
+    "subtitle": {
+      "ko": "고대 건축·정치·종교의 상징",
+      "en": "A symbol of ancient architecture, politics and religion",
+      "el": "Σύμβολο αρχαίας αρχιτεκτονικής, πολιτικής και θρησκείας"
+    },
+    "description": {
+      "ko": "아테네 아크로폴리스의 핵심 건축물로, 고대 그리스의 정치·종교·예술이 결합된 문화유산입니다. 단순한 건축물 설명을 넘어 당시 도시국가의 가치와 사회적 맥락을 함께 살펴볼 수 있습니다.",
+      "en": "A landmark of the Acropolis where architecture, religion and civic identity intersect. The guide connects the monument with the social and political context of ancient Athens.",
+      "el": "Κεντρικό μνημείο της Ακρόπολης, όπου συνδέονται η αρχιτεκτονική, η θρησκεία και η πολιτική ταυτότητα της αρχαίας Αθήνας."
+    },
+    "museum": "Acropolis Museum / Acropolis Route",
+    "period": "Classical Greece",
+    "lat": 37.9715,
+    "lon": 23.7267,
+    "emoji": "🏛️"
+  },
+  {
+    "id": "hellenic_it",
+    "type": "museum",
+    "title": {
+      "ko": "헬레닉 IT 뮤지엄",
+      "en": "Hellenic IT Museum",
+      "el": "Ελληνικό Μουσείο Πληροφορικής"
+    },
+    "subtitle": {
+      "ko": "기술사의 맥락을 해설하는 디지털 아카이브",
+      "en": "A digital archive for understanding the history of computing",
+      "el": "Ψηφιακό αρχείο για την ιστορία της πληροφορικής"
+    },
+    "description": {
+      "ko": "컴퓨터와 정보기술의 발전 과정을 기기 자체가 아니라 사용 방식과 사회 변화의 맥락 속에서 이해하도록 구성한 예시 콘텐츠입니다. 기술 유산 역시 문화유산처럼 기록·해설될 수 있다는 관점을 반영합니다.",
+      "en": "This sample guide interprets computing artifacts through changes in use, interfaces and society rather than listing devices alone.",
+      "el": "Το δείγμα ερμηνεύει τα τεχνολογικά αντικείμενα μέσα από τις αλλαγές στη χρήση, τις διεπαφές και την κοινωνία."
+    },
+    "museum": "Hellenic IT Museum",
+    "period": "Modern Technology Heritage",
+    "lat": 37.9435,
+    "lon": 23.68,
+    "emoji": "💻"
+  },
+  {
+    "id": "metro_heritage",
+    "type": "city",
+    "title": {
+      "ko": "아테네 메트로 문화유산",
+      "en": "Athens Metro Heritage",
+      "el": "Πολιτιστική Κληρονομιά του Μετρό Αθήνας"
+    },
+    "subtitle": {
+      "ko": "도시 일상 속 문화유산 연계 정보",
+      "en": "Heritage embedded in everyday urban space",
+      "el": "Πολιτιστική κληρονομιά μέσα στον καθημερινό αστικό χώρο"
+    },
+    "description": {
+      "ko": "박물관 밖의 지하철역과 공공공간에서도 고고학적 자료와 문화재를 접할 수 있다는 관찰에서 출발한 콘텐츠입니다. 박물관 관람 기록과 도시 속 문화유산을 하나의 탐색 경험으로 연결합니다.",
+      "en": "Inspired by archaeological displays in metro stations and public spaces, this section connects museum visits with heritage encountered in the city.",
+      "el": "Η ενότητα συνδέει την εμπειρία του μουσείου με την πολιτιστική κληρονομιά που συναντά ο επισκέπτης στην πόλη."
+    },
+    "museum": "Athens Metro Heritage Route",
+    "period": "Urban Heritage",
+    "lat": 37.9755,
+    "lon": 23.7348,
+    "emoji": "🚇"
+  },
+  {
+    "id": "kerameikos",
+    "type": "city",
+    "title": {
+      "ko": "케라메이코스",
+      "en": "Kerameikos",
+      "el": "Κεραμεικός"
+    },
+    "subtitle": {
+      "ko": "도시·장례 문화와 고대 아테네의 공간 구조",
+      "en": "Urban space and funerary culture in ancient Athens",
+      "el": "Αστικός χώρος και ταφική κουλτούρα της αρχαίας Αθήνας"
+    },
+    "description": {
+      "ko": "고대 아테네의 도시 경계와 장례 문화, 이동 경로를 함께 이해할 수 있는 장소를 예시로 구성했습니다.",
+      "en": "A sample guide to the urban boundary, routes and funerary culture of ancient Athens.",
+      "el": "Παράδειγμα ξενάγησης για τα όρια της πόλης, τις διαδρομές και την ταφική κουλτούρα."
+    },
+    "museum": "Kerameikos Archaeological Site",
+    "period": "Ancient Athens",
+    "lat": 37.9783,
+    "lon": 23.7187,
+    "emoji": "🏺"
+  }
+]

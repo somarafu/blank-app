@@ -1,0 +1,34 @@
+{
+  "CP-ATH-0820-001": {
+    "customer_name": "Demo Visitor",
+    "visit_date": "2026-08-20",
+    "valid_until": "2026-08-27",
+    "access": [
+      "parthenon",
+      "hellenic_it",
+      "metro_heritage",
+      "kerameikos"
+    ],
+    "route": "Athens Culture Route"
+  },
+  "CP-MUS-0821-002": {
+    "customer_name": "Museum Guest",
+    "visit_date": "2026-08-21",
+    "valid_until": "2026-08-28",
+    "access": [
+      "hellenic_it"
+    ],
+    "route": "Hellenic IT Museum"
+  },
+  "CP-ATH-0822-003": {
+    "customer_name": "Heritage Guest",
+    "visit_date": "2026-08-22",
+    "valid_until": "2026-08-29",
+    "access": [
+      "parthenon",
+      "metro_heritage",
+      "kerameikos"
+    ],
+    "route": "Athens Heritage Route"
+  }
+}
