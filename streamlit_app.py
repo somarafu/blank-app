@@ -165,6 +165,16 @@ st.markdown(
         min-height:48px!important;
     }
 
+    /* 로그인 전체 카드: 내부 여백을 늘려 하단 Demo 박스와 외곽선이 겹치지 않게 */
+    div[data-testid="stVerticalBlockBorderWrapper"]{
+        border-radius:20px !important;
+        overflow:visible !important;
+    }
+
+    div[data-testid="stVerticalBlockBorderWrapper"] > div{
+        padding:30px 32px 34px 32px !important;
+    }
+
     /* 로그인 카드 */
     .login-title{
         font-family:Georgia,"Times New Roman","Noto Serif KR",serif;
@@ -194,11 +204,12 @@ st.markdown(
         background:var(--blue-soft);
         border:1px solid #DDE5F8;
         border-radius:12px;
-        padding:13px 15px;
+        padding:12px 16px;
         color:#3B414C;
         font-size:13px;
-        line-height:1.55;
-        margin-top:9px;
+        line-height:1.5;
+        margin:14px 0 8px 0;
+        box-sizing:border-box;
     }
 
     /* 상단 */
@@ -414,7 +425,7 @@ def audio_button(text, key):
 # =========================================================
 def login_page():
     st.markdown("<div style='height:5vh'></div>", unsafe_allow_html=True)
-    left, center, right = st.columns([0.8, 1.8, 0.8])
+    left, center, right = st.columns([0.9, 1.7, 0.9])
 
     with center:
         with st.container(border=True):
@@ -465,6 +476,8 @@ def login_page():
                 '<div class="demo-box"><b>Demo Ticket</b> &nbsp; CP-ATH-0820-001</div>',
                 unsafe_allow_html=True,
             )
+            # 외곽 컨테이너 하단과 Demo Ticket 박스 사이의 안전 여백
+            st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
 
 # =========================================================
