@@ -415,11 +415,37 @@ st.markdown(
         -webkit-text-fill-color:#969CA7!important;
     }
 
-    /* 버튼 */
+    /* 버튼
+       Audio / Read More / Save 버튼의 높이와 수직 정렬을 동일하게 고정 */
+    div[data-testid="stButton"]{
+        width:100% !important;
+        margin:0 !important;
+        padding:0 !important;
+    }
+
     div[data-testid="stButton"] button{
+        width:100% !important;
+        height:52px !important;
+        min-height:52px !important;
+        max-height:52px !important;
         border-radius:11px!important;
-        min-height:48px;
         font-weight:750;
+        padding:0 16px !important;
+        margin:0 !important;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+        line-height:1 !important;
+        box-sizing:border-box !important;
+    }
+
+    div[data-testid="stButton"] button p{
+        margin:0 !important;
+        padding:0 !important;
+        line-height:1 !important;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
     }
 
     div[data-testid="stButton"] button[kind="primary"]{
@@ -573,8 +599,15 @@ st.markdown(
     .card-meta{
         color:#858B95;
         font-size:11px;
-        min-height:27px;
-        margin-bottom:6px;
+        min-height:30px;
+        margin:8px 0 8px 0;
+        display:flex;
+        align-items:center;
+    }
+
+    /* 카드별 버튼 영역의 좌우 잘림 방지 */
+    div[data-testid="stHorizontalBlock"]{
+        align-items:stretch;
     }
 
     .detail-box{
@@ -726,33 +759,32 @@ def actual_image(item):
 
 
 def audio_button(text, key):
-    safe = json.dumps(text)
-    lang_code = LANGS[st.session_state.lang_label][1]
+    """Read More와 동일한 Streamlit 버튼을 사용하여 정렬/크기 문제를 방지."""
+    if st.button(
+        f"🔊 {ui('audio')}",
+        key=f"audio_{key}",
+        use_container_width=True,
+    ):
+        safe = json.dumps(text)
+        lang_code = LANGS[st.session_state.lang_label][1]
 
-    components.html(
-        f"""
-        <button onclick="speak_{key}()" style="
-            width:100%;
-            height:42px;
-            border-radius:9px;
-            border:1px solid #BAC7E4;
-            background:#FFFFFF;
-            color:#354F99;
-            font-weight:700;
-            cursor:pointer;
-        ">🔊 {ui("audio")}</button>
-        <script>
-        function speak_{key}(){{
-            if (!("speechSynthesis" in window)) return;
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance({safe});
-            u.lang = "{lang_code}";
-            window.speechSynthesis.speak(u);
-        }}
-        </script>
-        """,
-        height=47,
-    )
+        # 버튼 자체는 Streamlit native button,
+        # 음성 재생 스크립트만 높이 0의 component로 실행합니다.
+        components.html(
+            f"""
+            <script>
+            (() => {{
+                if (!("speechSynthesis" in window)) return;
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance({safe});
+                utterance.lang = "{lang_code}";
+                window.speechSynthesis.speak(utterance);
+            }})();
+            </script>
+            """,
+            height=0,
+        )
 
 
 # =========================================================
@@ -898,7 +930,7 @@ def heritage_cards(ticket):
                     unsafe_allow_html=True,
                 )
 
-                b1, b2 = st.columns(2)
+                b1, b2 = st.columns([1, 1], gap="small")
 
                 with b1:
                     audio_button(tr(item, "description"), item["id"])
