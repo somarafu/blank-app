@@ -48,7 +48,7 @@
     "emoji": "💻"
   },
   {
-    "id": "acropolis_museum",
+    "id": "metro_heritage",
     "type": "museum",
     "title": {
       "ko": "아크로폴리스 박물관",
@@ -56,14 +56,14 @@
       "el": "Μουσείο Ακρόπολης"
     },
     "subtitle": {
-      "ko": "아크로폴리스의 유물과 디지털 해설을 연결하는 박물관",
+      "ko": "아크로폴리스 유물과 디지털 해설을 연결하는 박물관",
       "en": "Connecting Acropolis collections with digital interpretation",
       "el": "Σύνδεση των συλλογών της Ακρόπολης με την ψηφιακή ερμηνεία"
     },
     "description": {
-      "ko": "아크로폴리스 박물관은 아테네 아크로폴리스와 그 주변 유적의 문화유산을 중심으로 전시하는 박물관입니다. 박물관 1층 서쪽에는 프로필라이아, 아테나 니케 신전, 에레크테이온의 조각과 건축 부재가 전시되며, 카리아티드도 주요 전시품에 포함됩니다. 공식 디지털 가이드는 개인 스마트기기를 활용해 상설 컬렉션을 탐색할 수 있도록 지원하고, 30개 또는 60개 주요 전시품을 다루는 오디오 투어를 제공합니다. 콘텐츠는 29개 언어로 자동 번역되어 텍스트 또는 음성 형식으로 이용할 수 있습니다.",
-      "en": "The Acropolis Museum presents cultural heritage associated with the Athenian Acropolis and its surrounding archaeological context. On the west side of the first floor, visitors can see sculptures and architectural members from the Propylaia, the Temple of Athena Nike and the Erechtheion, including the Caryatids among the museum highlights. Its official digital guide supports interactive exploration of the permanent collections on personal smart devices, offers audio tours of 30 or 60 selected exhibits, and provides automatic translation into 29 languages in text or voice format.",
-      "el": "Το Μουσείο Ακρόπολης παρουσιάζει την πολιτιστική κληρονομιά που συνδέεται με την Αθηναϊκή Ακρόπολη και το αρχαιολογικό της περιβάλλον. Στη δυτική πλευρά του πρώτου ορόφου εκτίθενται γλυπτά και αρχιτεκτονικά μέλη από τα Προπύλαια, τον Ναό της Αθηνάς Νίκης και το Ερέχθειο, ενώ οι Καρυάτιδες αποτελούν από τα σημαντικότερα εκθέματα. Ο επίσημος ψηφιακός οδηγός επιτρέπει διαδραστική εξερεύνηση των μόνιμων συλλογών μέσω προσωπικών έξυπνων συσκευών, προσφέρει ηχητικές περιηγήσεις 30 ή 60 επιλεγμένων εκθεμάτων και αυτόματη μετάφραση περιεχομένου σε 29 γλώσσες σε μορφή κειμένου ή φωνής."
+      "ko": "아크로폴리스 박물관은 아테네 아크로폴리스와 직접 관련된 문화유산을 중심으로 전시합니다. 1층 서쪽에는 프로필라이아, 아테나 니케 신전, 에레크테이온의 조각과 건축 부재가 전시되며 카리아티드도 주요 전시품에 포함됩니다. 박물관은 Smartify와 협력한 무료 디지털 가이드를 제공해 개인 스마트기기에서 상설 컬렉션을 인터랙티브하게 탐색할 수 있도록 지원합니다.",
+      "en": "The Acropolis Museum presents cultural heritage associated directly with the Athenian Acropolis. The west side of the first floor displays sculptures and architectural members from the Propylaia, the Temple of Athena Nike and the Erechtheion, with the Caryatids among its highlights. A free digital guide developed with Smartify supports interactive exploration of the permanent collections on personal smart devices.",
+      "el": "Το Μουσείο Ακρόπολης παρουσιάζει πολιτιστικά τεκμήρια που συνδέονται άμεσα με την Αθηναϊκή Ακρόπολη. Στη δυτική πλευρά του πρώτου ορόφου εκτίθενται γλυπτά και αρχιτεκτονικά μέλη από τα Προπύλαια, τον Ναό της Αθηνάς Νίκης και το Ερέχθειο. Διατίθεται επίσης δωρεάν ψηφιακός οδηγός σε συνεργασία με το Smartify."
     },
     "museum": "Acropolis Museum",
     "period": "Archaic to Classical Greece",
