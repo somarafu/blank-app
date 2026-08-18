@@ -23,7 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent
 # =========================================================
 # DATA
 # =========================================================
-@st.cache_data
 def load_data():
     heritage_path = BASE_DIR / "data" / "heritage.json"
     tickets_path = BASE_DIR / "data" / "tickets.json"
@@ -43,8 +42,102 @@ def load_data():
 
 
 HERITAGE, TICKETS = load_data()
-HIDDEN_HERITAGE_IDS = {"kerameikos"}
-HERITAGE = [item for item in HERITAGE if item.get("id") not in HIDDEN_HERITAGE_IDS]
+
+# ------------------------------------------------------------------
+# Runtime data normalization
+# - Kerameikos is removed everywhere.
+# - The old "metro_heritage" slot is repurposed as "Acropolis Museum".
+#   Keeping the internal id "metro_heritage" means existing tickets.json
+#   files continue to work without requiring another GitHub edit.
+# ------------------------------------------------------------------
+ACROPOLIS_MUSEUM_ITEM = {
+    "id": "metro_heritage",
+    "type": "museum",
+    "title": {
+        "ko": "아크로폴리스 박물관",
+        "en": "Acropolis Museum",
+        "el": "Μουσείο Ακρόπολης"
+    },
+    "subtitle": {
+        "ko": "아크로폴리스 유물과 디지털 해설을 연결하는 박물관",
+        "en": "Connecting Acropolis collections with digital interpretation",
+        "el": "Σύνδεση των συλλογών της Ακρόπολης με την ψηφιακή ερμηνεία"
+    },
+    "description": {
+        "ko": (
+            "아크로폴리스 박물관은 아테네 아크로폴리스에서 출토되거나 "
+            "그 유적과 직접 관련된 문화유산을 중심으로 전시합니다. "
+            "공식 안내에 따르면 박물관 1층 서쪽에는 프로필라이아, "
+            "아테나 니케 신전, 에레크테이온의 조각과 건축 부재가 전시되며 "
+            "카리아티드도 주요 전시품에 포함됩니다. 또한 박물관은 Smartify와 "
+            "협력한 무료 디지털 가이드를 제공하여 개인 스마트기기에서 "
+            "상설 컬렉션을 인터랙티브하게 탐색할 수 있도록 지원합니다."
+        ),
+        "en": (
+            "The Acropolis Museum presents cultural heritage associated directly "
+            "with the Athenian Acropolis. According to the Museum, the west side "
+            "of the first floor displays sculptures and architectural members "
+            "from the Propylaia, the Temple of Athena Nike and the Erechtheion, "
+            "with the Caryatids among its major highlights. The Museum also offers "
+            "a free digital guide developed with Smartify, allowing visitors to "
+            "explore the permanent collections interactively on personal smart devices."
+        ),
+        "el": (
+            "Το Μουσείο Ακρόπολης παρουσιάζει πολιτιστικά τεκμήρια που συνδέονται "
+            "άμεσα με την Αθηναϊκή Ακρόπολη. Στη δυτική πλευρά του πρώτου ορόφου "
+            "εκτίθενται γλυπτά και αρχιτεκτονικά μέλη από τα Προπύλαια, τον Ναό "
+            "της Αθηνάς Νίκης και το Ερέχθειο. Το Μουσείο προσφέρει επίσης δωρεάν "
+            "ψηφιακό οδηγό σε συνεργασία με το Smartify για διαδραστική εξερεύνηση "
+            "των μόνιμων συλλογών μέσω προσωπικών έξυπνων συσκευών."
+        )
+    },
+    "museum": "Acropolis Museum",
+    "period": "Archaic to Classical Greece",
+    "lat": 37.9684,
+    "lon": 23.7285,
+    "emoji": "🏛️"
+}
+
+normalized_heritage = []
+acropolis_added = False
+
+for item in HERITAGE:
+    item_id = item.get("id")
+
+    # Remove Kerameikos completely
+    if item_id == "kerameikos":
+        continue
+
+    # Replace either the old metro item or a previously-created acropolis item
+    if item_id in {"metro_heritage", "acropolis_museum"}:
+        if not acropolis_added:
+            normalized_heritage.append(ACROPOLIS_MUSEUM_ITEM.copy())
+            acropolis_added = True
+        continue
+
+    normalized_heritage.append(item)
+
+# If the old JSON happens not to contain the third item, still add it.
+if not acropolis_added:
+    normalized_heritage.append(ACROPOLIS_MUSEUM_ITEM.copy())
+
+HERITAGE = normalized_heritage
+
+# Normalize ticket permissions too.
+for ticket in TICKETS.values():
+    access = []
+    for item_id in ticket.get("access", []):
+        if item_id == "kerameikos":
+            continue
+        if item_id == "acropolis_museum":
+            item_id = "metro_heritage"
+        if item_id not in access:
+            access.append(item_id)
+
+    # Athens-oriented tickets that previously contained the metro slot
+    # automatically continue to include the Acropolis Museum.
+    ticket["access"] = access
+
 HERITAGE_BY_ID = {item["id"]: item for item in HERITAGE}
 
 LANGS = {
