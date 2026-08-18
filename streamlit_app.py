@@ -434,19 +434,19 @@ def login_page():
                 unsafe_allow_html=True,
             )
             st.markdown(
-                '<div class="login-title">박물관 입장권으로<br>문화유산을 다시 만나다</div>',
+                '<div class="login-title">Your Museum Ticket,<br>Your Heritage Journey Continues</div>',
                 unsafe_allow_html=True,
             )
             st.markdown(
-                '<div class="login-desc">박물관 입장권의 <b>고객번호</b>를 입력하면 '
-                '관람했던 문화유산의 다국어 해설과 음성 안내를 관람 이후에도 다시 확인할 수 있습니다.</div>',
+                '<div class="login-desc">Enter the <b>customer number</b> on your museum ticket '
+                'to revisit multilingual heritage guides and audio commentary even after your visit.</div>',
                 unsafe_allow_html=True,
             )
 
             st.text_input(
-                "티켓 고객번호",
+                "Ticket Customer Number",
                 key="login_code",
-                placeholder="예: CP-ATH-0820-001",
+                placeholder="Example: CP-ATH-0820-001",
             )
 
             c1, c2 = st.columns([1.1, 1])
@@ -463,7 +463,7 @@ def login_page():
                         st.session_state.selected_id = None
                         st.rerun()
                     else:
-                        st.error("등록되지 않은 고객번호입니다.")
+                        st.error("This customer number is not registered. Please check your ticket and try again.")
 
             with c2:
                 st.button(
