@@ -1,4 +1,3 @@
-
 import json
 from pathlib import Path
 
@@ -700,10 +699,28 @@ def use_demo():
     st.session_state.login_code = "CP-ATH-0820-001"
 
 
+DEFAULT_IMAGE_PATHS = {
+    "parthenon": "assets/parthenon.jpg",
+    "hellenic_it": "assets/hellenic_it_museum.jpg",
+    # This project internally reuses the old metro_heritage id
+    # for the Acropolis Museum card.
+    "metro_heritage": "assets/acropolis_museum.jpg",
+    "acropolis_museum": "assets/acropolis_museum.jpg",
+}
+
+
 def actual_image(item):
+    # 1) Prefer an explicit image path from heritage.json.
     image = item.get("image")
+
+    # 2) If an older JSON file has no image field, fall back to the
+    #    built-in mapping above so the photo still appears.
+    if not image:
+        image = DEFAULT_IMAGE_PATHS.get(item.get("id"))
+
     if not image:
         return None
+
     path = BASE_DIR / image
     return path if path.exists() else None
 
