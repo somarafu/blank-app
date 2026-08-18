@@ -1,4 +1,3 @@
-
 import json
 from pathlib import Path
 
@@ -95,7 +94,8 @@ ACROPOLIS_MUSEUM_ITEM = {
     "period": "Archaic to Classical Greece",
     "lat": 37.9684,
     "lon": 23.7285,
-    "emoji": "🏛️"
+    "emoji": "🏛️",
+    "image": "assets/acropolis_museum.jpg"
 }
 
 normalized_heritage = []
@@ -111,7 +111,11 @@ for item in HERITAGE:
     # Replace either the old metro item or a previously-created acropolis item
     if item_id in {"metro_heritage", "acropolis_museum"}:
         if not acropolis_added:
-            normalized_heritage.append(ACROPOLIS_MUSEUM_ITEM.copy())
+            normalized_item = ACROPOLIS_MUSEUM_ITEM.copy()
+            # If heritage.json already has a custom image path, keep it.
+            if item.get("image"):
+                normalized_item["image"] = item["image"]
+            normalized_heritage.append(normalized_item)
             acropolis_added = True
         continue
 
