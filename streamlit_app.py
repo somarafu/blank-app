@@ -1,3 +1,4 @@
+
 import json
 from pathlib import Path
 
@@ -148,6 +149,192 @@ LANGS = {
     "한국어": ("ko", "ko-KR"),
     "English": ("en", "en-US"),
     "Ελληνικά": ("el", "el-GR"),
+}
+
+# =========================================================
+# GLOBAL UI TRANSLATIONS
+# 로그인 첫 페이지는 이전 요청대로 영어 고정.
+# 로그인 이후에는 우측 상단 언어 선택에 따라
+# 화면의 모든 UI 문구가 함께 바뀝니다.
+# =========================================================
+UI_TEXT = {
+    "ko": {
+        "logout": "로그아웃",
+        "ticket_verified": "티켓 인증 완료",
+        "visit": "방문",
+        "available_until": "이용 가능",
+        "until_suffix": "까지",
+        "home": "홈",
+        "my_heritage_tab": "나의 문화유산",
+        "city_heritage_tab": "도시 문화유산",
+        "search_tab": "검색",
+        "heritage_guide": "문화유산 가이드",
+        "audio": "음성 해설",
+        "read_more": "자세히 보기",
+        "save": "저장",
+        "saved": "저장됨",
+        "saved_count": "저장",
+        "my_saved_heritage": "저장한 문화유산",
+        "no_saved": "아직 저장한 문화유산이 없습니다.",
+        "my_heritage": "나의 문화유산",
+        "accessible": "열람 가능",
+        "viewed": "열람 기록",
+        "recent_views": "최근 열람 기록",
+        "no_recent_views": "‘자세히 보기’를 누르면 이곳에 열람 기록이 남습니다.",
+        "city_heritage": "도시 문화유산",
+        "no_city": "현재 티켓에 연결된 도시 문화유산이 없습니다.",
+        "search_heritage": "문화유산 검색",
+        "search_label": "문화유산 검색",
+        "search_placeholder": "예: 파르테논 / 헬레닉 IT 뮤지엄 / 아크로폴리스 박물관",
+        "results": "개 결과",
+        "open": "열기",
+        "museum": "박물관",
+        "period": "시대",
+    },
+    "en": {
+        "logout": "LOG OUT",
+        "ticket_verified": "Ticket Verified",
+        "visit": "Visit",
+        "available_until": "Available until",
+        "until_suffix": "",
+        "home": "HOME",
+        "my_heritage_tab": "MY HERITAGE",
+        "city_heritage_tab": "CITY HERITAGE",
+        "search_tab": "SEARCH",
+        "heritage_guide": "Heritage Guide",
+        "audio": "Audio",
+        "read_more": "Read More",
+        "save": "Save",
+        "saved": "Saved",
+        "saved_count": "Saved",
+        "my_saved_heritage": "My Saved Heritage",
+        "no_saved": "No heritage items have been saved yet.",
+        "my_heritage": "My Heritage",
+        "accessible": "Accessible",
+        "viewed": "Viewed",
+        "recent_views": "Recent Views",
+        "no_recent_views": "Items opened with ‘Read More’ will appear here.",
+        "city_heritage": "City Heritage",
+        "no_city": "No city heritage locations are linked to this ticket.",
+        "search_heritage": "Search Heritage",
+        "search_label": "Search heritage",
+        "search_placeholder": "e.g. Parthenon / Hellenic IT Museum / Acropolis Museum",
+        "results": " results",
+        "open": "OPEN",
+        "museum": "Museum",
+        "period": "Period",
+    },
+    "el": {
+        "logout": "ΑΠΟΣΥΝΔΕΣΗ",
+        "ticket_verified": "Το εισιτήριο επαληθεύτηκε",
+        "visit": "Επίσκεψη",
+        "available_until": "Πρόσβαση έως",
+        "until_suffix": "",
+        "home": "ΑΡΧΙΚΗ",
+        "my_heritage_tab": "Η ΚΛΗΡΟΝΟΜΙΑ ΜΟΥ",
+        "city_heritage_tab": "ΚΛΗΡΟΝΟΜΙΑ ΤΗΣ ΠΟΛΗΣ",
+        "search_tab": "ΑΝΑΖΗΤΗΣΗ",
+        "heritage_guide": "Οδηγός πολιτιστικής κληρονομιάς",
+        "audio": "Ηχητική ξενάγηση",
+        "read_more": "Περισσότερα",
+        "save": "Αποθήκευση",
+        "saved": "Αποθηκεύτηκε",
+        "saved_count": "Αποθηκευμένα",
+        "my_saved_heritage": "Αποθηκευμένη κληρονομιά",
+        "no_saved": "Δεν έχουν αποθηκευτεί ακόμη στοιχεία πολιτιστικής κληρονομιάς.",
+        "my_heritage": "Η κληρονομιά μου",
+        "accessible": "Διαθέσιμα",
+        "viewed": "Προβληθέντα",
+        "recent_views": "Πρόσφατες προβολές",
+        "no_recent_views": "Τα στοιχεία που ανοίγετε με «Περισσότερα» θα εμφανίζονται εδώ.",
+        "city_heritage": "Πολιτιστική κληρονομιά της πόλης",
+        "no_city": "Δεν υπάρχουν σημεία αστικής πολιτιστικής κληρονομιάς συνδεδεμένα με αυτό το εισιτήριο.",
+        "search_heritage": "Αναζήτηση πολιτιστικής κληρονομιάς",
+        "search_label": "Αναζήτηση πολιτιστικής κληρονομιάς",
+        "search_placeholder": "π.χ. Παρθενώνας / Ελληνικό Μουσείο Πληροφορικής / Μουσείο Ακρόπολης",
+        "results": " αποτελέσματα",
+        "open": "ΑΝΟΙΓΜΑ",
+        "museum": "Μουσείο",
+        "period": "Περίοδος",
+    },
+}
+
+# 티켓에 들어 있는 영문 데이터도 선택한 언어에 맞게 표시
+TICKET_TEXT = {
+    "customer_name": {
+        "Demo Visitor": {
+            "ko": "데모 방문객",
+            "en": "Demo Visitor",
+            "el": "Επισκέπτης επίδειξης",
+        },
+        "Museum Guest": {
+            "ko": "박물관 방문객",
+            "en": "Museum Guest",
+            "el": "Επισκέπτης μουσείου",
+        },
+        "Heritage Guest": {
+            "ko": "문화유산 방문객",
+            "en": "Heritage Guest",
+            "el": "Επισκέπτης πολιτιστικής κληρονομιάς",
+        },
+    },
+    "route": {
+        "Athens Culture Route": {
+            "ko": "아테네 문화 탐방 경로",
+            "en": "Athens Culture Route",
+            "el": "Πολιτιστική διαδρομή Αθήνας",
+        },
+        "Hellenic IT Museum": {
+            "ko": "헬레닉 IT 뮤지엄",
+            "en": "Hellenic IT Museum",
+            "el": "Ελληνικό Μουσείο Πληροφορικής",
+        },
+        "Athens Heritage Route": {
+            "ko": "아테네 문화유산 탐방 경로",
+            "en": "Athens Heritage Route",
+            "el": "Διαδρομή πολιτιστικής κληρονομιάς Αθήνας",
+        },
+    },
+}
+
+# heritage.json에서 아직 영문 문자열로 저장된 박물관명/시대 정보 번역
+HERITAGE_META = {
+    "parthenon": {
+        "museum": {
+            "ko": "아크로폴리스 박물관 / 아크로폴리스 관람 경로",
+            "en": "Acropolis Museum / Acropolis Route",
+            "el": "Μουσείο Ακρόπολης / Διαδρομή Ακρόπολης",
+        },
+        "period": {
+            "ko": "고전기 그리스",
+            "en": "Classical Greece",
+            "el": "Κλασική Ελλάδα",
+        },
+    },
+    "hellenic_it": {
+        "museum": {
+            "ko": "헬레닉 IT 뮤지엄",
+            "en": "Hellenic IT Museum",
+            "el": "Ελληνικό Μουσείο Πληροφορικής",
+        },
+        "period": {
+            "ko": "근현대 기술 유산",
+            "en": "Modern Technology Heritage",
+            "el": "Νεότερη τεχνολογική κληρονομιά",
+        },
+    },
+    "metro_heritage": {
+        "museum": {
+            "ko": "아크로폴리스 박물관",
+            "en": "Acropolis Museum",
+            "el": "Μουσείο Ακρόπολης",
+        },
+        "period": {
+            "ko": "고졸기~고전기 그리스",
+            "en": "Archaic to Classical Greece",
+            "el": "Αρχαϊκή έως Κλασική Ελλάδα",
+        },
+    },
 }
 
 
@@ -462,10 +649,41 @@ st.markdown(
 # =========================================================
 # HELPERS
 # =========================================================
+def current_lang():
+    return LANGS[st.session_state.lang_label][0]
+
+
+def ui(key):
+    lang = current_lang()
+    return UI_TEXT.get(lang, UI_TEXT["en"]).get(key, UI_TEXT["en"].get(key, key))
+
+
 def tr(item, field):
-    code = LANGS[st.session_state.lang_label][0]
+    lang = current_lang()
     values = item.get(field, {})
-    return values.get(code) or values.get("en") or next(iter(values.values()), "")
+    if isinstance(values, dict):
+        return values.get(lang) or values.get("en") or next(iter(values.values()), "")
+    return str(values)
+
+
+def ticket_tr(ticket, field):
+    lang = current_lang()
+    raw = ticket.get(field, "")
+    translated = TICKET_TEXT.get(field, {}).get(raw, {})
+    return translated.get(lang) or translated.get("en") or raw
+
+
+def meta_tr(item, field):
+    lang = current_lang()
+
+    # 명시적 다국어 메타데이터가 JSON에 들어 있다면 우선 사용
+    raw = item.get(field, "")
+    if isinstance(raw, dict):
+        return raw.get(lang) or raw.get("en") or next(iter(raw.values()), "")
+
+    # 현재 프로젝트 데이터의 영문 문자열은 ID별 번역표로 변환
+    translated = HERITAGE_META.get(item.get("id"), {}).get(field, {})
+    return translated.get(lang) or translated.get("en") or str(raw)
 
 
 def logout():
@@ -505,7 +723,7 @@ def audio_button(text, key):
             color:#354F99;
             font-weight:700;
             cursor:pointer;
-        ">🔊 Audio</button>
+        ">🔊 {ui("audio")}</button>
         <script>
         function speak_{key}(){{
             if (!("speechSynthesis" in window)) return;
@@ -587,6 +805,7 @@ def header(ticket):
     left, right = st.columns([4.7, 1.3], vertical_alignment="center")
 
     with left:
+        # 서비스명은 고유 브랜드명으로 유지
         st.markdown('<div class="brand">DIGITAL HERITAGE ACCESS</div>', unsafe_allow_html=True)
 
     with right:
@@ -601,18 +820,19 @@ def header(ticket):
             st.session_state.lang_label = new_lang
 
         with b:
-            if st.button("LOG OUT", use_container_width=True):
+            if st.button(ui("logout"), use_container_width=True):
                 logout()
 
+    valid_suffix = ui("until_suffix")
     st.markdown(
         f"""
         <div class="ticket-box">
-            <div class="ticket-title">🎟 Ticket Verified ✓</div>
+            <div class="ticket-title">🎟 {ui("ticket_verified")} ✓</div>
             <div class="ticket-meta">
-                {ticket.get("customer_name","")} ·
-                {ticket.get("route","")} ·
-                방문 {ticket.get("visit_date","")} ·
-                이용 가능 {ticket.get("valid_until","")}까지
+                {ticket_tr(ticket, "customer_name")} ·
+                {ticket_tr(ticket, "route")} ·
+                {ui("visit")} {ticket.get("visit_date","")} ·
+                {ui("available_until")} {ticket.get("valid_until","")}{valid_suffix}
             </div>
         </div>
         """,
@@ -657,7 +877,7 @@ def heritage_cards(ticket):
                     )
 
                 st.markdown(
-                    f'<div class="card-meta">{item.get("museum","")}</div>',
+                    f'<div class="card-meta">{meta_tr(item, "museum")}</div>',
                     unsafe_allow_html=True,
                 )
 
@@ -668,7 +888,7 @@ def heritage_cards(ticket):
 
                 with b2:
                     if st.button(
-                        "Read More",
+                        ui("read_more"),
                         key=f"read_{item['id']}",
                         type="primary",
                         use_container_width=True,
@@ -680,7 +900,7 @@ def heritage_cards(ticket):
                 saved = item["id"] in st.session_state.saved
 
                 if st.button(
-                    "★ Saved" if saved else "☆ Save",
+                    f"★ {ui('saved')}" if saved else f"☆ {ui('save')}",
                     key=f"save_{item['id']}",
                     use_container_width=True,
                 ):
@@ -705,7 +925,7 @@ def detail_box():
         f"""
         <div class="detail-box">
             <div class="detail-title">{tr(item,"title")}</div>
-            <div class="detail-meta">{item.get("museum","")} · {item.get("period","")}</div>
+            <div class="detail-meta">{meta_tr(item, "museum")} · {meta_tr(item, "period")}</div>
             <div class="detail-text">{tr(item,"description")}</div>
         </div>
         """,
@@ -715,7 +935,7 @@ def detail_box():
 
 def saved_section():
     st.markdown(
-        '<div class="section-title">My Saved Heritage</div>',
+        f'<div class="section-title">{ui("my_saved_heritage")}</div>',
         unsafe_allow_html=True,
     )
 
@@ -726,7 +946,7 @@ def saved_section():
     ]
 
     if not items:
-        st.caption("아직 저장한 문화유산이 없습니다.")
+        st.caption(ui("no_saved"))
         return
 
     cols = st.columns(min(4, len(items)))
@@ -737,7 +957,7 @@ def saved_section():
                 f"""
                 <div class="saved-card">
                     <div class="saved-title">{item.get("emoji","🏛️")} {tr(item,"title")}</div>
-                    <div class="saved-meta">{item.get("museum","")}</div>
+                    <div class="saved-meta">{meta_tr(item, "museum")}</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -749,7 +969,7 @@ def saved_section():
 # =========================================================
 def home_page(ticket):
     st.markdown(
-        '<div class="section-title">Heritage Guide</div>',
+        f'<div class="section-title">{ui("heritage_guide")}</div>',
         unsafe_allow_html=True,
     )
 
@@ -764,26 +984,26 @@ def home_page(ticket):
 # =========================================================
 def my_heritage_page(ticket):
     st.markdown(
-        '<div class="section-title">My Heritage</div>',
+        f'<div class="section-title">{ui("my_heritage")}</div>',
         unsafe_allow_html=True,
     )
 
     a, b, c = st.columns(3)
-    a.metric("Accessible", len([x for x in ticket.get("access", []) if x in HERITAGE_BY_ID]))
-    b.metric("Saved", len(st.session_state.saved))
-    c.metric("Viewed", len(st.session_state.viewed))
+    a.metric(ui("accessible"), len([x for x in ticket.get("access", []) if x in HERITAGE_BY_ID]))
+    b.metric(ui("saved_count"), len(st.session_state.saved))
+    c.metric(ui("viewed"), len(st.session_state.viewed))
 
     st.write("")
-    st.markdown("#### 최근 열람 기록")
+    st.markdown(f"#### {ui('recent_views')}")
 
     if not st.session_state.viewed:
-        st.info("Read More를 누르면 이곳에 열람 기록이 남습니다.")
+        st.info(ui("no_recent_views"))
     else:
         for item_id in reversed(st.session_state.viewed[-6:]):
             item = HERITAGE_BY_ID[item_id]
             with st.container(border=True):
                 st.write(f"{item.get('emoji','🏛️')} **{tr(item,'title')}**")
-                st.caption(item.get("museum", ""))
+                st.caption(meta_tr(item, "museum"))
 
     st.write("")
     saved_section()
@@ -794,7 +1014,7 @@ def my_heritage_page(ticket):
 # =========================================================
 def city_page(ticket):
     st.markdown(
-        '<div class="section-title">City Heritage</div>',
+        f'<div class="section-title">{ui("city_heritage")}</div>',
         unsafe_allow_html=True,
     )
 
@@ -806,7 +1026,7 @@ def city_page(ticket):
     ]
 
     if not items:
-        st.info("현재 티켓에 연결된 도시 문화유산이 없습니다.")
+        st.info(ui("no_city"))
         return
 
     df = pd.DataFrame([
@@ -819,7 +1039,7 @@ def city_page(ticket):
     for item in items:
         with st.expander(f"{item.get('emoji','🏛️')} {tr(item,'title')}"):
             st.write(tr(item, "description"))
-            st.caption(item.get("museum", ""))
+            st.caption(meta_tr(item, "museum"))
 
 
 # =========================================================
@@ -827,13 +1047,13 @@ def city_page(ticket):
 # =========================================================
 def search_page(ticket):
     st.markdown(
-        '<div class="section-title">Search Heritage</div>',
+        f'<div class="section-title">{ui("search_heritage")}</div>',
         unsafe_allow_html=True,
     )
 
     query = st.text_input(
-        "문화유산 검색",
-        placeholder="예: 파르테논 / Hellenic IT / Metro",
+        ui("search_label"),
+        placeholder=ui("search_placeholder"),
     )
 
     items = [
@@ -862,16 +1082,16 @@ def search_page(ticket):
     else:
         result = items
 
-    st.caption(f"{len(result)} results")
+    st.caption(f"{len(result)}{ui('results')}")
 
     for item in result:
         with st.container(border=True):
             st.markdown(f"### {item.get('emoji','🏛️')} {tr(item,'title')}")
             st.write(tr(item, "subtitle"))
-            st.caption(f"{item.get('museum','')} · {item.get('period','')}")
+            st.caption(f"{meta_tr(item, 'museum')} · {meta_tr(item, 'period')}")
 
             if st.button(
-                "OPEN",
+                ui("open"),
                 key=f"search_{item['id']}",
                 type="primary",
             ):
@@ -895,10 +1115,10 @@ def main():
     header(ticket)
 
     tabs = st.tabs([
-        "HOME",
-        "MY HERITAGE",
-        "CITY HERITAGE",
-        "SEARCH",
+        ui("home"),
+        ui("my_heritage_tab"),
+        ui("city_heritage_tab"),
+        ui("search_tab"),
     ])
 
     with tabs[0]:
