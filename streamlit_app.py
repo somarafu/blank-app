@@ -42,6 +42,8 @@ def load_data():
 
 
 HERITAGE, TICKETS = load_data()
+HIDDEN_HERITAGE_IDS = {"kerameikos"}
+HERITAGE = [item for item in HERITAGE if item.get("id") not in HIDDEN_HERITAGE_IDS]
 HERITAGE_BY_ID = {item["id"]: item for item in HERITAGE}
 
 LANGS = {
@@ -487,7 +489,7 @@ def header(ticket):
     left, right = st.columns([4.7, 1.3], vertical_alignment="center")
 
     with left:
-        st.markdown('<div class="brand">CULTURE PASS</div>', unsafe_allow_html=True)
+        st.markdown('<div class="brand">DIGITAL HERITAGE ACCESS</div>', unsafe_allow_html=True)
 
     with right:
         a, b = st.columns([1.45, 1])
@@ -669,7 +671,7 @@ def my_heritage_page(ticket):
     )
 
     a, b, c = st.columns(3)
-    a.metric("Accessible", len(ticket.get("access", [])))
+    a.metric("Accessible", len([x for x in ticket.get("access", []) if x in HERITAGE_BY_ID]))
     b.metric("Saved", len(st.session_state.saved))
     c.metric("Viewed", len(st.session_state.viewed))
 
