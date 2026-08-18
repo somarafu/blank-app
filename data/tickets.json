@@ -6,8 +6,7 @@
     "access": [
       "parthenon",
       "hellenic_it",
-      "metro_heritage",
-      "kerameikos"
+      "metro_heritage"
     ],
     "route": "Athens Culture Route"
   },
@@ -26,8 +25,7 @@
     "valid_until": "2026-08-29",
     "access": [
       "parthenon",
-      "metro_heritage",
-      "kerameikos"
+      "metro_heritage"
     ],
     "route": "Athens Heritage Route"
   }
