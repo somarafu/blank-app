@@ -1,6 +1,4 @@
 import json
-import html
-import textwrap
 from pathlib import Path
 
 import pandas as pd
@@ -12,7 +10,7 @@ import streamlit.components.v1 as components
 # PAGE CONFIG
 # =========================================================
 st.set_page_config(
-    page_title="Digital Heritage Guide",
+    page_title="CULTURE PASS",
     page_icon="🏛️",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -29,17 +27,12 @@ def load_data():
     heritage_path = BASE_DIR / "data" / "heritage.json"
     tickets_path = BASE_DIR / "data" / "tickets.json"
 
-    missing = [
-        str(p.relative_to(BASE_DIR))
-        for p in (heritage_path, tickets_path)
-        if not p.exists()
-    ]
-
-    if missing:
+    if not heritage_path.exists() or not tickets_path.exists():
         st.error(
-            "필수 데이터 파일을 찾을 수 없습니다.\n\n"
-            + "\n".join(f"- `{m}`" for m in missing)
-            + "\n\nGitHub 저장소에서 `data` 폴더 안에 JSON 파일이 있는지 확인해 주세요."
+            "data 폴더 안에 heritage.json과 tickets.json이 필요합니다.\n\n"
+            "구조 예시:\n"
+            "data/heritage.json\n"
+            "data/tickets.json"
         )
         st.stop()
 
@@ -59,481 +52,299 @@ LANGS = {
 
 
 # =========================================================
-# SESSION STATE
+# SESSION
 # =========================================================
-def init_state():
-    defaults = {
-        "authenticated": False,
-        "ticket_no": None,
-        "saved": set(),
-        "viewed": [],
-        "selected_id": None,
-        "lang_label": "한국어",
-        "login_code": "",
-    }
+DEFAULTS = {
+    "authenticated": False,
+    "ticket_no": None,
+    "saved": set(),
+    "viewed": [],
+    "selected_id": None,
+    "lang_label": "한국어",
+    "login_code": "",
+}
 
-    for key, value in defaults.items():
-        if key not in st.session_state:
-            st.session_state[key] = value
-
-
-init_state()
-
-
-# =========================================================
-# IMPORTANT: HTML RENDER HELPER
-# 멀티라인 HTML의 들여쓰기가 Markdown 코드블록으로 렌더링되는 현상 방지
-# =========================================================
-def render_html(markup: str):
-    st.markdown(
-        textwrap.dedent(markup).strip(),
-        unsafe_allow_html=True,
-    )
+for key, value in DEFAULTS.items():
+    if key not in st.session_state:
+        st.session_state[key] = value
 
 
 # =========================================================
 # STYLE
 # =========================================================
-render_html(
+st.markdown(
     """
     <style>
-    :root {
-        --page: #F7F8FC;
-        --surface: #FFFFFF;
-        --surface-soft: #F5F7FC;
-        --blue: #4C61B8;
-        --blue-deep: #354B99;
-        --blue-soft: #EEF2FC;
-        --line: #E0E5EF;
-        --line-blue: #C8D3F0;
-        --text: #171A22;
-        --subtext: #555B67;
-        --muted: #8B919C;
+    :root{
+        --page:#F7F8FC;
+        --surface:#FFFFFF;
+        --blue:#4C61B8;
+        --blue-deep:#354B99;
+        --blue-soft:#EEF2FC;
+        --line:#E0E5EF;
+        --text:#171A22;
+        --sub:#5B616C;
+        --muted:#8A909A;
     }
 
-    html {
-        color-scheme: light !important;
+    html, body, [data-testid="stAppViewContainer"], .stApp{
+        background:var(--page)!important;
+        color:var(--text)!important;
     }
 
-    html, body, [data-testid="stAppViewContainer"], .stApp {
-        background: var(--page) !important;
-        color: var(--text) !important;
+    .block-container{
+        max-width:1420px;
+        padding-top:1.5rem;
+        padding-bottom:3rem;
     }
 
-    .block-container {
-        max-width: 1540px;
-        padding-top: 1.35rem;
-        padding-bottom: 3rem;
-    }
+    #MainMenu, footer, header{visibility:hidden;}
 
-    #MainMenu, footer, header {
-        visibility: hidden;
-    }
-
-    /* 기본 텍스트 */
     [data-testid="stMarkdownContainer"],
     [data-testid="stMarkdownContainer"] p,
-    [data-testid="stMarkdownContainer"] li,
     [data-testid="stWidgetLabel"],
     [data-testid="stWidgetLabel"] p,
-    .stCaption,
-    label {
-        color: var(--text) !important;
+    .stCaption, label{
+        color:var(--text)!important;
     }
 
-    /* Input */
-    div[data-baseweb="input"] > div {
-        background: #FFFFFF !important;
-        border: 1px solid #D5DBE7 !important;
-        border-radius: 12px !important;
-        box-shadow: none !important;
-        min-height: 56px !important;
+    /* 입력창 */
+    div[data-baseweb="input"] > div{
+        background:#FFFFFF!important;
+        border:1px solid #D7DDE8!important;
+        border-radius:12px!important;
+        min-height:56px!important;
+        box-shadow:none!important;
     }
 
-    div[data-baseweb="input"] input {
-        color: #14171D !important;
-        -webkit-text-fill-color: #14171D !important;
-        background: #FFFFFF !important;
-        font-size: 16px !important;
-        padding-left: 6px !important;
+    div[data-baseweb="input"] input{
+        background:#FFFFFF!important;
+        color:#171A22!important;
+        -webkit-text-fill-color:#171A22!important;
+        font-size:16px!important;
     }
 
-    div[data-baseweb="input"] input::placeholder {
-        color: #9298A4 !important;
-        -webkit-text-fill-color: #9298A4 !important;
+    div[data-baseweb="input"] input::placeholder{
+        color:#969CA7!important;
+        -webkit-text-fill-color:#969CA7!important;
     }
 
-    /* Select */
-    div[data-baseweb="select"] > div {
-        background: #FFFFFF !important;
-        color: var(--text) !important;
-        border: 1px solid #D9DFE9 !important;
-        border-radius: 11px !important;
-        min-height: 48px !important;
+    /* 버튼 */
+    div[data-testid="stButton"] button{
+        border-radius:11px!important;
+        min-height:48px;
+        font-weight:750;
     }
 
-    /* Buttons */
-    div[data-testid="stButton"] button {
-        min-height: 50px;
-        border-radius: 11px;
-        font-weight: 760;
-        transition: .15s ease;
-        box-shadow: none !important;
+    div[data-testid="stButton"] button[kind="primary"]{
+        background:var(--blue)!important;
+        color:white!important;
+        border:1px solid var(--blue)!important;
     }
 
-    div[data-testid="stButton"] button:not([kind="primary"]) {
-        background: #FFFFFF !important;
-        color: #222630 !important;
-        border: 1px solid #D6DDE9 !important;
+    div[data-testid="stButton"] button[kind="primary"] p{
+        color:white!important;
     }
 
-    div[data-testid="stButton"] button:not([kind="primary"]) p {
-        color: #222630 !important;
+    div[data-testid="stButton"] button:not([kind="primary"]){
+        background:white!important;
+        color:#232731!important;
+        border:1px solid #D5DBE7!important;
     }
 
-    div[data-testid="stButton"] button[kind="primary"] {
-        background: var(--blue) !important;
-        color: #FFFFFF !important;
-        border: 1px solid var(--blue) !important;
+    div[data-testid="stButton"] button:not([kind="primary"]) p{
+        color:#232731!important;
     }
 
-    div[data-testid="stButton"] button[kind="primary"] p {
-        color: #FFFFFF !important;
+    /* select */
+    div[data-baseweb="select"] > div{
+        background:white!important;
+        color:#171A22!important;
+        border:1px solid #D8DEE9!important;
+        border-radius:11px!important;
+        min-height:48px!important;
     }
 
-    div[data-testid="stButton"] button:hover {
-        transform: translateY(-1px);
+    /* 로그인 카드 */
+    .login-title{
+        font-family:Georgia,"Times New Roman","Noto Serif KR",serif;
+        font-size:40px;
+        font-weight:800;
+        line-height:1.22;
+        color:#171A22;
+        margin-bottom:12px;
     }
 
-    /* ================= LOGIN ================= */
-    .login-window-top {
-        width: 100%;
-        height: 48px;
-        background: #FFFFFF;
-        border: 1px solid #DFE3EA;
-        border-bottom: 0;
-        border-radius: 24px 24px 0 0;
-        padding: 0 19px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        box-sizing: border-box;
+    .login-kicker{
+        color:var(--blue-deep);
+        font-weight:850;
+        font-size:12px;
+        letter-spacing:.13em;
+        margin-bottom:10px;
     }
 
-    .window-dot {
-        width: 11px;
-        height: 11px;
-        border-radius: 999px;
-        display: inline-block;
+    .login-desc{
+        color:#555B65;
+        line-height:1.75;
+        font-size:15px;
+        margin-bottom:18px;
     }
 
-    .dot-red { background: #C97764; }
-    .dot-yellow { background: #D5B66A; }
-    .dot-green { background: #7FAF67; }
-
-    /* login 카드가 더 넓고 여유롭게 보이도록 */
-    div[data-testid="stVerticalBlockBorderWrapper"] {
-        background: #FFFFFF !important;
-        border-color: #DFE3EA !important;
-        border-radius: 0 0 24px 24px !important;
+    .demo-box{
+        background:var(--blue-soft);
+        border:1px solid #DDE5F8;
+        border-radius:12px;
+        padding:13px 15px;
+        color:#3B414C;
+        font-size:13px;
+        line-height:1.55;
+        margin-top:9px;
     }
 
-    div[data-testid="stVerticalBlockBorderWrapper"] > div {
-        padding: 28px 34px 30px 34px !important;
+    /* 상단 */
+    .brand{
+        font-family:Georgia,"Times New Roman",serif;
+        font-weight:800;
+        font-size:24px;
+        color:#1E2F61;
+        letter-spacing:.02em;
     }
 
-    .login-eyebrow {
-        color: var(--blue-deep);
-        font-size: 12px;
-        font-weight: 850;
-        letter-spacing: .13em;
-        margin-bottom: 10px;
+    .ticket-box{
+        background:linear-gradient(90deg,#F0F4FC 0%,#FBFCFE 100%);
+        border:1px solid #D9E2F3;
+        border-radius:15px;
+        padding:18px 20px;
+        margin:10px 0 18px 0;
     }
 
-    .login-title {
-        color: var(--text);
-        font-family: Georgia, "Times New Roman", "Noto Serif KR", serif;
-        font-size: 38px;
-        line-height: 1.25;
-        font-weight: 800;
-        margin: 0 0 14px 0;
+    .ticket-title{
+        color:var(--blue-deep);
+        font-weight:850;
+        font-size:20px;
+        margin-bottom:4px;
     }
 
-    .login-description {
-        color: #505661;
-        font-size: 15px;
-        line-height: 1.8;
-        margin-bottom: 18px;
+    .ticket-meta{
+        color:#454B56;
+        font-size:13px;
+        line-height:1.55;
     }
 
-    .login-guide {
-        background: var(--blue-soft);
-        border: 1px solid #DCE5FA;
-        border-radius: 13px;
-        color: #343A47;
-        padding: 14px 16px;
-        font-size: 13px;
-        line-height: 1.6;
-        margin-top: 10px;
+    /* 카드 */
+    .section-title{
+        color:#334E9D;
+        font-size:20px;
+        font-weight:850;
+        margin:8px 0 12px 0;
     }
 
-    /* ================= MAIN APP ================= */
-    .app-kicker {
-        color: #555C6D;
-        font-size: 12px;
-        font-weight: 850;
-        letter-spacing: .10em;
-        padding-top: 7px;
+    .card-head{
+        background:#FFFFFF;
+        border:1px solid #E0E4EC;
+        border-radius:14px 14px 0 0;
+        padding:15px 15px 10px 15px;
+        min-height:92px;
     }
 
-    .platform-shell {
-        background: #FFFFFF;
-        border: 1px solid #DEE3EC;
-        border-radius: 20px;
-        box-shadow: 0 12px 34px rgba(46, 57, 82, .06);
-        overflow: hidden;
-        margin: 10px 0 18px 0;
+    .card-title{
+        color:#425DAB;
+        font-size:18px;
+        font-weight:850;
+        margin-bottom:4px;
     }
 
-    .browser-top {
-        height: 43px;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        padding: 0 18px;
-        border-bottom: 1px solid #ECEEF3;
+    .card-sub{
+        color:#3D424C;
+        font-size:12.5px;
+        line-height:1.45;
     }
 
-    .platform-title-row {
-        padding: 16px 22px 10px 22px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .card-visual{
+        background:linear-gradient(135deg,#EDF2FB,#F8F6F2);
+        border:1px solid #E3E7EE;
+        border-top:0;
+        border-radius:0 0 14px 14px;
+        height:170px;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-size:72px;
+        margin-bottom:8px;
     }
 
-    .platform-brand {
-        color: #1D2C5B;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 22px;
-        font-weight: 800;
+    .card-meta{
+        color:#858B95;
+        font-size:11px;
+        min-height:27px;
+        margin-bottom:6px;
     }
 
-    .route-pill {
-        background: #F1F4FA;
-        border: 1px solid #E0E5EF;
-        color: #45557D;
-        padding: 7px 12px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 700;
+    .detail-box{
+        background:white;
+        border:1px solid #DCE3F1;
+        border-radius:14px;
+        padding:18px;
+        margin-top:15px;
     }
 
-    .verified {
-        margin: 0 22px 20px 22px;
-        padding: 17px 18px;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        background: linear-gradient(90deg, #F0F4FC, #FAFBFE);
-        border: 1px solid #D9E1F2;
-        border-radius: 14px;
+    .detail-title{
+        color:#314C98;
+        font-size:21px;
+        font-weight:850;
     }
 
-    .verified-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 999px;
-        background: var(--blue);
-        color: #FFFFFF;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 21px;
-        flex: 0 0 auto;
+    .detail-meta{
+        color:#858B95;
+        font-size:12px;
+        margin:3px 0 10px 0;
     }
 
-    .verified-title {
-        color: var(--blue-deep);
-        font-size: 18px;
-        font-weight: 850;
+    .detail-text{
+        color:#272B33;
+        font-size:14px;
+        line-height:1.75;
     }
 
-    .verified-sub {
-        color: #414751;
-        font-size: 13px;
-        margin-top: 3px;
+    .saved-card{
+        background:white;
+        border:1px solid #E0E4EC;
+        border-radius:11px;
+        padding:10px 12px;
+        min-height:68px;
     }
 
-    /* Side panels */
-    .side-panel {
-        background: #FFFFFF;
-        border: 1px solid #E0E5ED;
-        border-radius: 18px;
-        padding: 18px 16px;
-        min-height: 510px;
-        box-sizing: border-box;
+    .saved-title{
+        color:#20242C;
+        font-size:13px;
+        font-weight:750;
     }
 
-    .side-title {
-        color: var(--blue);
-        text-align: center;
-        font-size: 19px;
-        font-weight: 850;
-        padding: 2px 0 13px 0;
-        border-bottom: 1px solid #DDE3EE;
+    .saved-meta{
+        color:#8B919B;
+        font-size:10.5px;
+        margin-top:3px;
     }
 
-    .side-row {
-        padding: 16px 2px;
-        border-bottom: 1px solid #ECEEF3;
+    div[data-baseweb="tab-list"]{
+        gap:8px;
     }
 
-    .side-row:last-child {
-        border-bottom: none;
+    button[data-baseweb="tab"]{
+        color:#565D68!important;
+        font-weight:750!important;
     }
 
-    .side-row-title {
-        color: #3652A0;
-        font-size: 14px;
-        font-weight: 850;
+    button[data-baseweb="tab"][aria-selected="true"]{
+        color:#344F9F!important;
     }
 
-    .side-row-text {
-        color: #555B65;
-        font-size: 12px;
-        line-height: 1.6;
-        margin-top: 4px;
-    }
-
-    /* Heritage */
-    .section-label {
-        color: #344F9F;
-        font-size: 20px;
-        font-weight: 850;
-        margin: 5px 0 12px 0;
-    }
-
-    .heritage-card {
-        background: #FFFFFF;
-        border: 1px solid #E0E4EC;
-        border-radius: 14px;
-        padding: 15px;
-        min-height: 110px;
-        box-sizing: border-box;
-    }
-
-    .card-title {
-        color: #425DAA;
-        font-size: 18px;
-        font-weight: 850;
-    }
-
-    .card-subtitle {
-        color: #343942;
-        font-size: 12.5px;
-        line-height: 1.5;
-        min-height: 40px;
-        margin-top: 4px;
-    }
-
-    .card-visual {
-        height: 132px;
-        border-radius: 11px;
-        border: 1px solid #E3E7EE;
-        background: linear-gradient(135deg, #EEF2FA, #F8F6F2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 64px;
-        margin: 9px 0 10px 0;
-    }
-
-    .card-meta {
-        color: #808590;
-        font-size: 11px;
-        min-height: 28px;
-        margin: 4px 0 6px 0;
-    }
-
-    .detail-box {
-        background: #FFFFFF;
-        border: 1px solid #DCE3F2;
-        border-radius: 15px;
-        padding: 18px;
-        margin-top: 15px;
-    }
-
-    .detail-title {
-        color: #314D99;
-        font-size: 21px;
-        font-weight: 850;
-    }
-
-    .detail-meta {
-        color: #808690;
-        font-size: 12px;
-        margin-top: 3px;
-    }
-
-    .detail-text {
-        color: #252931;
-        font-size: 14px;
-        line-height: 1.75;
-        margin-top: 10px;
-    }
-
-    .saved-chip {
-        background: #FFFFFF;
-        border: 1px solid #E0E4EC;
-        border-radius: 11px;
-        padding: 10px 11px;
-        min-height: 67px;
-    }
-
-    .saved-title {
-        color: #20242D;
-        font-size: 13px;
-        font-weight: 760;
-    }
-
-    .saved-meta {
-        color: #898F99;
-        font-size: 10.5px;
-        margin-top: 3px;
-    }
-
-    .quote-box {
-        background: #EEF3FC;
-        border: 1px solid #DBE4F8;
-        border-radius: 14px;
-        color: #405BA5;
-        padding: 16px 20px;
-        text-align: center;
-        font-size: 15px;
-        font-weight: 750;
-        margin-top: 17px;
-    }
-
-    /* Tabs */
-    div[data-baseweb="tab-list"] {
-        gap: 8px;
-    }
-
-    button[data-baseweb="tab"] {
-        color: #555C68 !important;
-        font-weight: 750 !important;
-    }
-
-    button[data-baseweb="tab"][aria-selected="true"] {
-        color: #344F9F !important;
-    }
-
-    @media (max-width: 900px) {
-        .login-title { font-size: 30px; }
-        .side-panel { min-height: auto; }
+    @media(max-width:900px){
+        .login-title{font-size:31px;}
     }
     </style>
-    """
+    """,
+    unsafe_allow_html=True,
 )
 
 
@@ -541,9 +352,9 @@ render_html(
 # HELPERS
 # =========================================================
 def tr(item, field):
-    lang_code = LANGS[st.session_state.lang_label][0]
+    code = LANGS[st.session_state.lang_label][0]
     values = item.get(field, {})
-    return values.get(lang_code) or values.get("en") or next(iter(values.values()), "")
+    return values.get(code) or values.get("en") or next(iter(values.values()), "")
 
 
 def logout():
@@ -556,28 +367,25 @@ def logout():
     st.rerun()
 
 
-def use_demo_ticket():
+def use_demo():
     st.session_state.login_code = "CP-ATH-0820-001"
 
 
-def image_path(item):
-    value = item.get("image")
-    if not value:
+def actual_image(item):
+    image = item.get("image")
+    if not image:
         return None
+    path = BASE_DIR / image
+    return path if path.exists() else None
 
-    p = BASE_DIR / value
-    return p if p.exists() else None
 
-
-def speech_button(text, key):
-    safe_text = json.dumps(text)
-    speech_lang = LANGS[st.session_state.lang_label][1]
+def audio_button(text, key):
+    safe = json.dumps(text)
+    lang_code = LANGS[st.session_state.lang_label][1]
 
     components.html(
         f"""
-        <button
-          onclick="speak_{key}()"
-          style="
+        <button onclick="speak_{key}()" style="
             width:100%;
             height:42px;
             border-radius:9px;
@@ -586,24 +394,14 @@ def speech_button(text, key):
             color:#354F99;
             font-weight:700;
             cursor:pointer;
-            font-family:Arial,sans-serif;
-          "
-        >
-          🔊 Audio
-        </button>
-
+        ">🔊 Audio</button>
         <script>
-        function speak_{key}() {{
-            if (!("speechSynthesis" in window)) {{
-                alert("이 브라우저는 음성 합성을 지원하지 않습니다.");
-                return;
-            }}
-
+        function speak_{key}(){{
+            if (!("speechSynthesis" in window)) return;
             window.speechSynthesis.cancel();
-
-            const utterance = new SpeechSynthesisUtterance({safe_text});
-            utterance.lang = "{speech_lang}";
-            window.speechSynthesis.speak(utterance);
+            const u = new SpeechSynthesisUtterance({safe});
+            u.lang = "{lang_code}";
+            window.speechSynthesis.speak(u);
         }}
         </script>
         """,
@@ -616,35 +414,22 @@ def speech_button(text, key):
 # =========================================================
 def login_page():
     st.markdown("<div style='height:5vh'></div>", unsafe_allow_html=True)
-
-    # 기존보다 카드 폭 확대
-    left_space, center, right_space = st.columns([0.7, 1.85, 0.7])
+    left, center, right = st.columns([0.8, 1.8, 0.8])
 
     with center:
-        render_html(
-            """
-            <div class="login-window-top">
-                <span class="window-dot dot-red"></span>
-                <span class="window-dot dot-yellow"></span>
-                <span class="window-dot dot-green"></span>
-            </div>
-            """
-        )
-
         with st.container(border=True):
-            render_html(
-                """
-                <div class="login-eyebrow">DIGITAL HERITAGE ACCESS</div>
-                <div class="login-title">
-                    박물관 입장권으로<br>
-                    문화유산을 다시 만나다
-                </div>
-                <div class="login-description">
-                    박물관 입장권의 <b>고객번호</b>를 인증하면,
-                    관람했던 문화유산의 다국어 해설과 음성 안내,
-                    그리고 도시 문화유산 연계 정보를 관람 이후에도 다시 확인할 수 있습니다.
-                </div>
-                """
+            st.markdown(
+                '<div class="login-kicker">DIGITAL HERITAGE ACCESS</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                '<div class="login-title">박물관 입장권으로<br>문화유산을 다시 만나다</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                '<div class="login-desc">박물관 입장권의 <b>고객번호</b>를 입력하면 '
+                '관람했던 문화유산의 다국어 해설과 음성 안내를 관람 이후에도 다시 확인할 수 있습니다.</div>',
+                unsafe_allow_html=True,
             )
 
             st.text_input(
@@ -653,9 +438,9 @@ def login_page():
                 placeholder="예: CP-ATH-0820-001",
             )
 
-            btn1, btn2 = st.columns([1.1, 1])
+            c1, c2 = st.columns([1.1, 1])
 
-            with btn1:
+            with c1:
                 if st.button("ENTER", type="primary", use_container_width=True):
                     code = st.session_state.login_code.strip().upper()
 
@@ -667,167 +452,63 @@ def login_page():
                         st.session_state.selected_id = None
                         st.rerun()
                     else:
-                        st.error("등록되지 않은 고객번호입니다. 티켓 정보를 다시 확인해 주세요.")
+                        st.error("등록되지 않은 고객번호입니다.")
 
-            with btn2:
+            with c2:
                 st.button(
                     "USE DEMO TICKET",
+                    on_click=use_demo,
                     use_container_width=True,
-                    on_click=use_demo_ticket,
                 )
 
-            render_html(
-                """
-                <div class="login-guide">
-                    <b>Demo Ticket</b> &nbsp; CP-ATH-0820-001<br>
-                    발표용 프로토타입입니다. 실제 서비스에서는 고객번호를
-                    서버 데이터베이스에서 암호화하여 검증하는 구조로 확장할 수 있습니다.
-                </div>
-                """
+            st.markdown(
+                '<div class="demo-box"><b>Demo Ticket</b> &nbsp; CP-ATH-0820-001</div>',
+                unsafe_allow_html=True,
             )
 
 
 # =========================================================
 # HEADER
 # =========================================================
-def main_header(ticket):
-    left, right = st.columns([4.8, 1.2], vertical_alignment="center")
+def header(ticket):
+    left, right = st.columns([4.7, 1.3], vertical_alignment="center")
 
     with left:
-        render_html(
-            '<div class="app-kicker">DIGITAL HERITAGE GUIDE</div>'
-        )
+        st.markdown('<div class="brand">CULTURE PASS</div>', unsafe_allow_html=True)
 
     with right:
         a, b = st.columns([1.45, 1])
-
         with a:
-            selected_lang = st.selectbox(
+            new_lang = st.selectbox(
                 "Language",
                 list(LANGS.keys()),
                 index=list(LANGS.keys()).index(st.session_state.lang_label),
                 label_visibility="collapsed",
             )
-            st.session_state.lang_label = selected_lang
+            st.session_state.lang_label = new_lang
 
         with b:
             if st.button("LOG OUT", use_container_width=True):
                 logout()
 
-    route = html.escape(ticket.get("route", ""))
-    name = html.escape(ticket.get("customer_name", ""))
-    visit = html.escape(ticket.get("visit_date", ""))
-    valid = html.escape(ticket.get("valid_until", ""))
-
-    render_html(
+    st.markdown(
         f"""
-        <div class="platform-shell">
-            <div class="browser-top">
-                <span class="window-dot dot-red"></span>
-                <span class="window-dot dot-yellow"></span>
-                <span class="window-dot dot-green"></span>
-            </div>
-
-            <div class="platform-title-row">
-                <div class="platform-brand">CULTURE PASS</div>
-                <div class="route-pill">{route}</div>
-            </div>
-
-            <div class="verified">
-                <div class="verified-icon">🎟</div>
-                <div>
-                    <div class="verified-title">Ticket Verified ✓</div>
-                    <div class="verified-sub">
-                        {name} · 방문 {visit} · 이용 가능 {valid}까지
-                    </div>
-                </div>
+        <div class="ticket-box">
+            <div class="ticket-title">🎟 Ticket Verified ✓</div>
+            <div class="ticket-meta">
+                {ticket.get("customer_name","")} ·
+                {ticket.get("route","")} ·
+                방문 {ticket.get("visit_date","")} ·
+                이용 가능 {ticket.get("valid_until","")}까지
             </div>
         </div>
-        """
+        """,
+        unsafe_allow_html=True,
     )
 
 
 # =========================================================
-# SIDE PANELS
-# =========================================================
-def core_structure():
-    render_html(
-        """
-        <div class="side-panel">
-            <div class="side-title">핵심 구조</div>
-
-            <div class="side-row">
-                <div class="side-row-title">01 · 티켓 기반 인증</div>
-                <div class="side-row-text">
-                    입장권 고객번호를 기반으로 승인된 콘텐츠에만 접근
-                </div>
-            </div>
-
-            <div class="side-row">
-                <div class="side-row-title">02 · 다국어 해설 모듈</div>
-                <div class="side-row-text">
-                    한국어·영어·그리스어 텍스트와 음성 해설 제공
-                </div>
-            </div>
-
-            <div class="side-row">
-                <div class="side-row-title">03 · 관람 기록 저장</div>
-                <div class="side-row-text">
-                    열람한 문화유산과 관심 콘텐츠를 개인 기록으로 축적
-                </div>
-            </div>
-
-            <div class="side-row">
-                <div class="side-row-title">04 · 통합 문화유산 연결</div>
-                <div class="side-row-text">
-                    박물관과 도시 공간의 문화유산을 하나의 탐색 경험으로 연결
-                </div>
-            </div>
-        </div>
-        """
-    )
-
-
-def expected_features():
-    render_html(
-        """
-        <div class="side-panel">
-            <div class="side-title">기대 기능</div>
-
-            <div class="side-row">
-                <div class="side-row-title">◎ 접근성</div>
-                <div class="side-row-text">
-                    다국어 해설을 통해 정보 접근의 언어 장벽을 완화
-                </div>
-            </div>
-
-            <div class="side-row">
-                <div class="side-row-title">▣ 지속성</div>
-                <div class="side-row-text">
-                    관람이 끝난 뒤에도 해설과 학습 경험을 지속
-                </div>
-            </div>
-
-            <div class="side-row">
-                <div class="side-row-title">○ 개인화</div>
-                <div class="side-row-text">
-                    관심 문화유산 저장과 회고를 통한 개인별 탐색 경험
-                </div>
-            </div>
-
-            <div class="side-row">
-                <div class="side-row-title">◇ 확장성</div>
-                <div class="side-row-text">
-                    향후 한국의 박물관·문화유산 서비스로 구조 확장 가능
-                </div>
-            </div>
-        </div>
-        """
-    )
-
-
-# =========================================================
-# HERITAGE CARDS
+# CARDS
 # =========================================================
 def heritage_cards(ticket):
     items = [
@@ -836,44 +517,43 @@ def heritage_cards(ticket):
         if item_id in HERITAGE_BY_ID
     ]
 
-    if not items:
-        st.info("현재 티켓으로 열람 가능한 문화유산이 없습니다.")
-        return
-
     for start in range(0, len(items), 3):
         row = items[start:start + 3]
-        cols = st.columns(len(row))
+        cols = st.columns(len(row), gap="medium")
 
         for col, item in zip(cols, row):
             with col:
-                render_html(
+                st.markdown(
                     f"""
-                    <div class="heritage-card">
-                        <div class="card-title">{html.escape(tr(item, "title"))}</div>
-                        <div class="card-subtitle">{html.escape(tr(item, "subtitle"))}</div>
+                    <div class="card-head">
+                        <div class="card-title">{tr(item,"title")}</div>
+                        <div class="card-sub">{tr(item,"subtitle")}</div>
                     </div>
-                    """
+                    """,
+                    unsafe_allow_html=True,
                 )
 
-                p = image_path(item)
+                img = actual_image(item)
 
-                if p:
-                    st.image(str(p), use_container_width=True)
+                if img:
+                    st.image(str(img), use_container_width=True)
                 else:
-                    render_html(
-                        f'<div class="card-visual">{item.get("emoji", "🏛️")}</div>'
+                    st.markdown(
+                        f'<div class="card-visual">{item.get("emoji","🏛️")}</div>',
+                        unsafe_allow_html=True,
                     )
 
-                render_html(
-                    f'<div class="card-meta">{html.escape(item.get("museum", ""))}</div>'
+                st.markdown(
+                    f'<div class="card-meta">{item.get("museum","")}</div>',
+                    unsafe_allow_html=True,
                 )
 
-                c1, c2 = st.columns(2)
+                b1, b2 = st.columns(2)
 
-                with c1:
-                    speech_button(tr(item, "description"), item["id"])
+                with b1:
+                    audio_button(tr(item, "description"), item["id"])
 
-                with c2:
+                with b2:
                     if st.button(
                         "Read More",
                         key=f"read_{item['id']}",
@@ -881,28 +561,26 @@ def heritage_cards(ticket):
                         use_container_width=True,
                     ):
                         st.session_state.selected_id = item["id"]
-
                         if item["id"] not in st.session_state.viewed:
                             st.session_state.viewed.append(item["id"])
 
-                is_saved = item["id"] in st.session_state.saved
+                saved = item["id"] in st.session_state.saved
 
                 if st.button(
-                    "★ Saved" if is_saved else "☆ Save",
+                    "★ Saved" if saved else "☆ Save",
                     key=f"save_{item['id']}",
                     use_container_width=True,
                 ):
-                    if is_saved:
+                    if saved:
                         st.session_state.saved.remove(item["id"])
                     else:
                         st.session_state.saved.add(item["id"])
-
                     st.rerun()
 
         st.write("")
 
 
-def detail_panel():
+def detail_box():
     item_id = st.session_state.selected_id
 
     if not item_id or item_id not in HERITAGE_BY_ID:
@@ -910,51 +588,46 @@ def detail_panel():
 
     item = HERITAGE_BY_ID[item_id]
 
-    render_html(
+    st.markdown(
         f"""
         <div class="detail-box">
-            <div class="detail-title">{html.escape(tr(item, "title"))}</div>
-            <div class="detail-meta">
-                {html.escape(item.get("museum", ""))}
-                ·
-                {html.escape(item.get("period", ""))}
-            </div>
-            <div class="detail-text">
-                {html.escape(tr(item, "description"))}
-            </div>
+            <div class="detail-title">{tr(item,"title")}</div>
+            <div class="detail-meta">{item.get("museum","")} · {item.get("period","")}</div>
+            <div class="detail-text">{tr(item,"description")}</div>
         </div>
-        """
+        """,
+        unsafe_allow_html=True,
     )
 
 
 def saved_section():
-    render_html('<div class="section-label">My Saved Heritage</div>')
+    st.markdown(
+        '<div class="section-title">My Saved Heritage</div>',
+        unsafe_allow_html=True,
+    )
 
-    saved_items = [
+    items = [
         HERITAGE_BY_ID[item_id]
         for item_id in st.session_state.saved
         if item_id in HERITAGE_BY_ID
     ]
 
-    if not saved_items:
-        st.caption("아직 저장된 문화유산이 없습니다.")
+    if not items:
+        st.caption("아직 저장한 문화유산이 없습니다.")
         return
 
-    cols = st.columns(min(4, len(saved_items)))
+    cols = st.columns(min(4, len(items)))
 
-    for idx, item in enumerate(saved_items):
-        with cols[idx % len(cols)]:
-            render_html(
+    for i, item in enumerate(items):
+        with cols[i % len(cols)]:
+            st.markdown(
                 f"""
-                <div class="saved-chip">
-                    <div class="saved-title">
-                        {item.get("emoji", "🏛️")} {html.escape(tr(item, "title"))}
-                    </div>
-                    <div class="saved-meta">
-                        {html.escape(item.get("museum", ""))}
-                    </div>
+                <div class="saved-card">
+                    <div class="saved-title">{item.get("emoji","🏛️")} {tr(item,"title")}</div>
+                    <div class="saved-meta">{item.get("museum","")}</div>
                 </div>
-                """
+                """,
+                unsafe_allow_html=True,
             )
 
 
@@ -962,40 +635,28 @@ def saved_section():
 # HOME
 # =========================================================
 def home_page(ticket):
-    left, middle, right = st.columns([1.05, 3.8, 1.05], gap="large")
-
-    with left:
-        core_structure()
-
-    with middle:
-        render_html('<div class="section-label">Heritage Guide</div>')
-        heritage_cards(ticket)
-        detail_panel()
-        st.write("")
-        saved_section()
-
-    with right:
-        expected_features()
-
-    render_html(
-        """
-        <div class="quote-box">
-            “정보 설계의 핵심은 데이터를 나열하는 데 있지 않고,
-            사용자가 맥락 속에서 지식을 재구성하도록 지원하는 데 있다.”
-        </div>
-        """
+    st.markdown(
+        '<div class="section-title">Heritage Guide</div>',
+        unsafe_allow_html=True,
     )
+
+    heritage_cards(ticket)
+    detail_box()
+    st.write("")
+    saved_section()
 
 
 # =========================================================
 # MY HERITAGE
 # =========================================================
 def my_heritage_page(ticket):
-    render_html('<div class="section-label">My Heritage</div>')
+    st.markdown(
+        '<div class="section-title">My Heritage</div>',
+        unsafe_allow_html=True,
+    )
 
     a, b, c = st.columns(3)
-
-    a.metric("Accessible Heritage", len(ticket.get("access", [])))
+    a.metric("Accessible", len(ticket.get("access", [])))
     b.metric("Saved", len(st.session_state.saved))
     c.metric("Viewed", len(st.session_state.viewed))
 
@@ -1003,16 +664,13 @@ def my_heritage_page(ticket):
     st.markdown("#### 최근 열람 기록")
 
     if not st.session_state.viewed:
-        st.info("상세 해설을 열람하면 이곳에 기록됩니다.")
+        st.info("Read More를 누르면 이곳에 열람 기록이 남습니다.")
     else:
         for item_id in reversed(st.session_state.viewed[-6:]):
             item = HERITAGE_BY_ID[item_id]
-
             with st.container(border=True):
-                st.write(
-                    f"{item.get('emoji', '🏛️')} **{tr(item, 'title')}**  \n"
-                    f"{item.get('museum', '')}"
-                )
+                st.write(f"{item.get('emoji','🏛️')} **{tr(item,'title')}**")
+                st.caption(item.get("museum", ""))
 
     st.write("")
     saved_section()
@@ -1021,40 +679,32 @@ def my_heritage_page(ticket):
 # =========================================================
 # CITY HERITAGE
 # =========================================================
-def city_heritage_page(ticket):
-    render_html('<div class="section-label">City Heritage</div>')
+def city_page(ticket):
+    st.markdown(
+        '<div class="section-title">City Heritage</div>',
+        unsafe_allow_html=True,
+    )
 
-    city_items = [
+    items = [
         HERITAGE_BY_ID[item_id]
         for item_id in ticket.get("access", [])
         if item_id in HERITAGE_BY_ID
         and HERITAGE_BY_ID[item_id].get("type") == "city"
     ]
 
-    st.write(
-        "박물관 내부의 관람 경험을 지하철역·공공공간·고고학 유적 등 "
-        "도시 일상의 문화유산 탐색으로 확장합니다."
-    )
-
-    if not city_items:
-        st.info("현재 티켓에는 도시 문화유산 경로가 포함되어 있지 않습니다.")
+    if not items:
+        st.info("현재 티켓에 연결된 도시 문화유산이 없습니다.")
         return
 
-    df = pd.DataFrame(
-        [
-            {
-                "lat": item["lat"],
-                "lon": item["lon"],
-                "name": tr(item, "title"),
-            }
-            for item in city_items
-        ]
-    )
+    df = pd.DataFrame([
+        {"lat": item["lat"], "lon": item["lon"], "name": tr(item, "title")}
+        for item in items
+    ])
 
     st.map(df, latitude="lat", longitude="lon", size=150)
 
-    for item in city_items:
-        with st.expander(f"{item.get('emoji', '🏛️')} {tr(item, 'title')}"):
+    for item in items:
+        with st.expander(f"{item.get('emoji','🏛️')} {tr(item,'title')}"):
             st.write(tr(item, "description"))
             st.caption(item.get("museum", ""))
 
@@ -1063,7 +713,10 @@ def city_heritage_page(ticket):
 # SEARCH
 # =========================================================
 def search_page(ticket):
-    render_html('<div class="section-label">Search Heritage</div>')
+    st.markdown(
+        '<div class="section-title">Search Heritage</div>',
+        unsafe_allow_html=True,
+    )
 
     query = st.text_input(
         "문화유산 검색",
@@ -1081,17 +734,15 @@ def search_page(ticket):
         result = []
 
         for item in items:
-            searchable = " ".join(
-                [
-                    item.get("title", {}).get("ko", ""),
-                    item.get("title", {}).get("en", ""),
-                    item.get("title", {}).get("el", ""),
-                    item.get("subtitle", {}).get("ko", ""),
-                    item.get("subtitle", {}).get("en", ""),
-                    item.get("museum", ""),
-                    item.get("period", ""),
-                ]
-            ).lower()
+            searchable = " ".join([
+                item.get("title", {}).get("ko", ""),
+                item.get("title", {}).get("en", ""),
+                item.get("title", {}).get("el", ""),
+                item.get("subtitle", {}).get("ko", ""),
+                item.get("subtitle", {}).get("en", ""),
+                item.get("museum", ""),
+                item.get("period", ""),
+            ]).lower()
 
             if q in searchable:
                 result.append(item)
@@ -1102,21 +753,20 @@ def search_page(ticket):
 
     for item in result:
         with st.container(border=True):
-            st.markdown(f"### {item.get('emoji', '🏛️')} {tr(item, 'title')}")
+            st.markdown(f"### {item.get('emoji','🏛️')} {tr(item,'title')}")
             st.write(tr(item, "subtitle"))
-            st.caption(f"{item.get('museum', '')} · {item.get('period', '')}")
+            st.caption(f"{item.get('museum','')} · {item.get('period','')}")
 
             if st.button(
                 "OPEN",
-                key=f"search_open_{item['id']}",
+                key=f"search_{item['id']}",
                 type="primary",
             ):
                 st.session_state.selected_id = item["id"]
-
                 if item["id"] not in st.session_state.viewed:
                     st.session_state.viewed.append(item["id"])
 
-    detail_panel()
+    detail_box()
 
 
 # =========================================================
@@ -1129,16 +779,14 @@ def main():
 
     ticket = TICKETS[st.session_state.ticket_no]
 
-    main_header(ticket)
+    header(ticket)
 
-    tabs = st.tabs(
-        [
-            "HOME",
-            "MY HERITAGE",
-            "CITY HERITAGE",
-            "SEARCH",
-        ]
-    )
+    tabs = st.tabs([
+        "HOME",
+        "MY HERITAGE",
+        "CITY HERITAGE",
+        "SEARCH",
+    ])
 
     with tabs[0]:
         home_page(ticket)
@@ -1147,7 +795,7 @@ def main():
         my_heritage_page(ticket)
 
     with tabs[2]:
-        city_heritage_page(ticket)
+        city_page(ticket)
 
     with tabs[3]:
         search_page(ticket)
