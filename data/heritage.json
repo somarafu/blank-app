@@ -21,7 +21,8 @@
     "period": "Classical Greece",
     "lat": 37.9715,
     "lon": 23.7267,
-    "emoji": "🏛️"
+    "emoji": "🏛️",
+    "image": "assets/parthenon.jpg"
   },
   {
     "id": "hellenic_it",
@@ -45,7 +46,8 @@
     "period": "Modern Technology Heritage",
     "lat": 37.9435,
     "lon": 23.68,
-    "emoji": "💻"
+    "emoji": "💻",
+    "image": "assets/hellenic_it_museum.jpg"
   },
   {
     "id": "metro_heritage",
@@ -69,6 +71,7 @@
     "period": "Archaic to Classical Greece",
     "lat": 37.9684,
     "lon": 23.7285,
-    "emoji": "🏛️"
+    "emoji": "🏛️",
+    "image": "assets/acropolis_museum.jpg"
   }
 ]
