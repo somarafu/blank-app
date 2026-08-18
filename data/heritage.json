@@ -70,29 +70,5 @@
     "lat": 37.9755,
     "lon": 23.7348,
     "emoji": "🚇"
-  },
-  {
-    "id": "kerameikos",
-    "type": "city",
-    "title": {
-      "ko": "케라메이코스",
-      "en": "Kerameikos",
-      "el": "Κεραμεικός"
-    },
-    "subtitle": {
-      "ko": "도시·장례 문화와 고대 아테네의 공간 구조",
-      "en": "Urban space and funerary culture in ancient Athens",
-      "el": "Αστικός χώρος και ταφική κουλτούρα της αρχαίας Αθήνας"
-    },
-    "description": {
-      "ko": "고대 아테네의 도시 경계와 장례 문화, 이동 경로를 함께 이해할 수 있는 장소를 예시로 구성했습니다.",
-      "en": "A sample guide to the urban boundary, routes and funerary culture of ancient Athens.",
-      "el": "Παράδειγμα ξενάγησης για τα όρια της πόλης, τις διαδρομές και την ταφική κουλτούρα."
-    },
-    "museum": "Kerameikos Archaeological Site",
-    "period": "Ancient Athens",
-    "lat": 37.9783,
-    "lon": 23.7187,
-    "emoji": "🏺"
   }
 ]
