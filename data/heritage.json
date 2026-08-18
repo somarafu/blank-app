@@ -48,27 +48,27 @@
     "emoji": "💻"
   },
   {
-    "id": "metro_heritage",
-    "type": "city",
+    "id": "acropolis_museum",
+    "type": "museum",
     "title": {
-      "ko": "아테네 메트로 문화유산",
-      "en": "Athens Metro Heritage",
-      "el": "Πολιτιστική Κληρονομιά του Μετρό Αθήνας"
+      "ko": "아크로폴리스 박물관",
+      "en": "Acropolis Museum",
+      "el": "Μουσείο Ακρόπολης"
     },
     "subtitle": {
-      "ko": "도시 일상 속 문화유산 연계 정보",
-      "en": "Heritage embedded in everyday urban space",
-      "el": "Πολιτιστική κληρονομιά μέσα στον καθημερινό αστικό χώρο"
+      "ko": "아크로폴리스의 유물과 디지털 해설을 연결하는 박물관",
+      "en": "Connecting Acropolis collections with digital interpretation",
+      "el": "Σύνδεση των συλλογών της Ακρόπολης με την ψηφιακή ερμηνεία"
     },
     "description": {
-      "ko": "박물관 밖의 지하철역과 공공공간에서도 고고학적 자료와 문화재를 접할 수 있다는 관찰에서 출발한 콘텐츠입니다. 박물관 관람 기록과 도시 속 문화유산을 하나의 탐색 경험으로 연결합니다.",
-      "en": "Inspired by archaeological displays in metro stations and public spaces, this section connects museum visits with heritage encountered in the city.",
-      "el": "Η ενότητα συνδέει την εμπειρία του μουσείου με την πολιτιστική κληρονομιά που συναντά ο επισκέπτης στην πόλη."
+      "ko": "아크로폴리스 박물관은 아테네 아크로폴리스와 그 주변 유적의 문화유산을 중심으로 전시하는 박물관입니다. 박물관 1층 서쪽에는 프로필라이아, 아테나 니케 신전, 에레크테이온의 조각과 건축 부재가 전시되며, 카리아티드도 주요 전시품에 포함됩니다. 공식 디지털 가이드는 개인 스마트기기를 활용해 상설 컬렉션을 탐색할 수 있도록 지원하고, 30개 또는 60개 주요 전시품을 다루는 오디오 투어를 제공합니다. 콘텐츠는 29개 언어로 자동 번역되어 텍스트 또는 음성 형식으로 이용할 수 있습니다.",
+      "en": "The Acropolis Museum presents cultural heritage associated with the Athenian Acropolis and its surrounding archaeological context. On the west side of the first floor, visitors can see sculptures and architectural members from the Propylaia, the Temple of Athena Nike and the Erechtheion, including the Caryatids among the museum highlights. Its official digital guide supports interactive exploration of the permanent collections on personal smart devices, offers audio tours of 30 or 60 selected exhibits, and provides automatic translation into 29 languages in text or voice format.",
+      "el": "Το Μουσείο Ακρόπολης παρουσιάζει την πολιτιστική κληρονομιά που συνδέεται με την Αθηναϊκή Ακρόπολη και το αρχαιολογικό της περιβάλλον. Στη δυτική πλευρά του πρώτου ορόφου εκτίθενται γλυπτά και αρχιτεκτονικά μέλη από τα Προπύλαια, τον Ναό της Αθηνάς Νίκης και το Ερέχθειο, ενώ οι Καρυάτιδες αποτελούν από τα σημαντικότερα εκθέματα. Ο επίσημος ψηφιακός οδηγός επιτρέπει διαδραστική εξερεύνηση των μόνιμων συλλογών μέσω προσωπικών έξυπνων συσκευών, προσφέρει ηχητικές περιηγήσεις 30 ή 60 επιλεγμένων εκθεμάτων και αυτόματη μετάφραση περιεχομένου σε 29 γλώσσες σε μορφή κειμένου ή φωνής."
     },
-    "museum": "Athens Metro Heritage Route",
-    "period": "Urban Heritage",
-    "lat": 37.9755,
-    "lon": 23.7348,
-    "emoji": "🚇"
+    "museum": "Acropolis Museum",
+    "period": "Archaic to Classical Greece",
+    "lat": 37.9684,
+    "lon": 23.7285,
+    "emoji": "🏛️"
   }
 ]
